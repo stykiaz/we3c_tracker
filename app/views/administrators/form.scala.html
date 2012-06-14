@@ -1,0 +1,56 @@
+@(action: String, form: Form[models.Administrator])
+
+@views.html.layout {
+		<div class="block">
+			
+				<div class="block_head">
+					<div class="bheadl"></div>
+					<div class="bheadr"></div>
+					
+					<h2>Administrators</h2>
+					
+				</div>		<!-- .block_head ends -->
+				
+				
+				
+				<div class="block_content">
+					
+					<p class="breadcrumb"><a href="@controllers.routes.Application.home()">Dashboard</a> &raquo; <a href="@controllers.routes.Administrators.index()">Administrators</a> &raquo; <strong> @action </strong></p>
+				
+					@if( flash().get("form_error") ){ <div class="message errormsg"><p>@flash().get("form_error")</p></div> }
+					
+					@if( flash().get("form_success") ){ <div class="message success"><p>@flash().get("form_success")</p></div> }
+					
+					@helper.form(action = controllers.routes.Administrators.save(), 'id -> "admin_form") {
+
+						<p>
+							<input type="hidden" name="_id" value="@form("_id").value()"/>
+							<label>Username:</label><br />
+							<input type="text" class="text small" name="username" value="@form("username").value()"/> 
+							<span class="note error">@flash().get("error_username")</span>
+						</p>
+						<p>
+							<label>Password:</label><br />
+							<input type="password" class="text small" name="password"/> 
+							<span class="note error">@flash().get("error_password")</span>
+						</p>
+						<p>
+							<label>Password (confirm):</label><br />
+							<input type="password" class="text small" name="password_confirm"/> 
+						</p>
+												
+						<hr />
+						
+						<p>
+							<input type="submit" class="submit small" value="Save" />
+						</p>
+					}
+					
+					
+				</div>		<!-- .block_content ends -->
+				
+				<div class="bendl"></div>
+				<div class="bendr"></div>
+					
+			</div>		<!-- .block ends -->
+}

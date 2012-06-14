@@ -1,0 +1,91 @@
+@(content: Html)
+@import utils.TemplateHelpers.getContextValueOr
+@import utils.TemplateHelpers.getContextRequiredJs
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=7" />
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<title>Control Panel &#9679; @getContextValueOr("admin_module", "")</title>
+	
+    <style type="text/css" media="all">
+		@@import url("/assets/stylesheets/admin/style.css");
+		@@import url("/assets/stylesheets/admin/facebox.css");
+		@@import url("/assets/stylesheets/admin/visualize.css");
+		@@import url("/assets/stylesheets/jquery.lightbox-0.5.css");
+		@@import url("/assets/stylesheets/jquery-ui-1.8.18.custom.css");
+    </style>
+	
+	<!--[if lt IE 8]><style type="text/css" media="all">@@import url("/assets/stylesheets/admin/ie.css");</style><![endif]-->
+
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
+
+</head>
+
+<body>
+	
+	<div id="hld">
+	
+		<div class="wrapper">		<!-- wrapper begins -->
+	
+			<div id="header">
+				<div class="hdrl"></div>
+				<div class="hdrr"></div>
+				
+				<h1>ControlPanel</h1>
+				
+				<ul id="nav">
+					<li class="@if( getContextValueOr("admin_parent_section", "").equals("dashboard") ){active}"><a href="@controllers.routes.Application.home()">Dashboard</a></li>
+					
+					<li class="@if( getContextValueOr("admin_parent_section", "").equals("settings") ){active}"><a href="#">Settings</a>
+						<ul>
+							<li><a href="@controllers.routes.Administrators.index()">Administrators</a></li>
+						</ul>
+					</li>
+					
+				</ul>
+				
+				<p class="user">Hello, <a href="@controllers.routes.Administrators.edit( session().get("admin_id") )">@session().get("admin_username")</a> | <a href="@controllers.routes.Application.logout()">Logout</a></p>
+				
+			</div>		<!-- #header ends -->
+	
+	@content
+			
+			<div id="footer">
+			
+				<p class="left"><a href="http://tracker.wethreecreatives.com">tracker.wethreecreatives.com</a></p>
+				<p class="right">powered by <a href="#">Stan</a> v0.1</p>
+				
+			</div>
+		
+		</div>						<!-- wrapper ends -->
+		
+	</div>		<!-- #hld ends -->
+	
+	<!--[if IE]><script type="text/javascript" src="/assets/javascripts/admin/excanvas.js"></script><![endif]-->	
+	
+	<script type="text/javascript" src="/assets/javascripts/jquery-ui-1.8.18.custom.min.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.filestyle.mini.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/jquery.lightbox-0.5.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.visualize.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.visualize.tooltip.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.select_skin.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/ajaxupload.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.pngfix.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/custom.js"></script>
+
+	@if( getContextRequiredJs() != null ) {
+		@for( script <- getContextRequiredJs() ) {
+			<script type="text/javascript" src="@script"></script>
+		}
+	}
+	
+	<script type="text/javascript" src="@routes.Application.javascriptRoutes()"></script>
+	
+</body>
+</html>

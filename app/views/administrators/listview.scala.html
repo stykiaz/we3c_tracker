@@ -1,0 +1,72 @@
+@(params: utils.BasicRequests.listingRequest, data: net.vz.mongodb.jackson.DBCursor[models.Administrator] )
+
+@views.html.layout {
+
+			<div class="block">
+			
+				<div class="block_head">
+					<div class="bheadl"></div>
+					<div class="bheadr"></div>
+					
+					<h2>Administrators</h2>
+					
+					<ul>
+						<!--<li><a href="#">Edit pages</a></li>-->
+						<li><a href="@controllers.routes.Administrators.create()"><span class="addItemBigPlus"></span>Add administrator</a></li>
+					</ul>
+				</div>		<!-- .block_head ends -->
+				
+				<div class="block_content">
+				
+					<form action="" method="post">
+					
+						<table cellpadding="0" cellspacing="0" width="100%" class="sortable">
+						
+							<thead>
+								<tr>
+									<th width="10"><input type="checkbox" class="check_all" /></th>
+									<th>Username</th>
+									<td>&nbsp;</td>
+								</tr>
+							</thead>
+							
+							<tbody>
+								@while( data.hasNext() ) {
+									@data.next()
+									<tr>
+										<td colspan="3">test</td>
+									</tr>
+								}
+								@*
+								@for( row <- data ) {
+								<tr id="row_@row.getLong("id")">
+									<td><input type="checkbox" name="delete_cb[]" value="@row.getLong("id")"/></td>
+									<td><a href="@controllers.routes.Administrators.edit( row.getLong("id") )">@row.getString("username")</a></td>
+									<td>@row.getString("last_login_at")</td>
+									<td>@row.getString("last_updated_at")</td>
+									<td class="delete"><a href="#" class="delete" rel="@controllers.routes.Administrators.delete()" id="@row.getInteger("id")">Delete</a></td>
+								</tr>
+								}
+								*@
+							</tbody>
+							
+						</table>
+						
+						@if( params.getTotalPages() > 1 ) {
+							<div class="pagination right">
+								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.Administrators.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
+								@for( cnt <- 1 to params.getTotalPages() ) {
+									<a href="@(controllers.routes.Administrators.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
+								}
+								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.Administrators.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }
+							</div>		<!-- .pagination ends -->
+						}
+					</form>
+					
+				</div>		<!-- .block_content ends -->
+				
+				<div class="bendl"></div>
+				<div class="bendr"></div>
+			</div>		<!-- .block ends -->
+			
+}

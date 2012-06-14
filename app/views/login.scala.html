@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<title>Adminus Page</title>
+	
+    <style type="text/css" media="all">
+		@@import url("/assets/stylesheets/admin/style.css");
+		@@import url("/assets/stylesheets/admin/jquery.wysiwyg.css");
+		@@import url("/assets/stylesheets/admin/facebox.css");
+		@@import url("/assets/stylesheets/admin/visualize.css");
+		@@import url("/assets/stylesheets/admin/date_input.css");
+    </style>
+	
+	<!--[if lt IE 8]><style type="text/css" media="all">@@import url("/assets/stylesheets/admin/ie.css");</style><![endif]-->
+
+</head>
+
+<body>
+	
+	<div id="hld">
+	
+		<div class="wrapper">		<!-- wrapper begins -->
+		
+			
+			<div class="block small center login">
+			
+				<div class="block_head">
+					<div class="bheadl"></div>
+					<div class="bheadr"></div>
+					
+					<h2>Login</h2>
+					<ul>
+						<li>SALES</li>
+					</ul>
+				</div>		<!-- .block_head ends -->
+				
+				<div class="block_content">
+					
+					@if( flash().get("form_error") ) { <div class="message errormsg"><p>@flash().get("form_error")</p></div> }
+					
+					<form action="" method="post">
+						<p>
+							<label>Username:</label> <br />
+							<input type="text" class="text" value="" name="username"/>
+						</p>
+						
+						<p>
+							<label>Password:</label> <br />
+							<input type="password" class="text" value="" name="password"/>
+						</p>
+						
+						<p>
+							<input type="submit" class="submit" value="Login" /> &nbsp; 
+							<input type="checkbox" class="checkbox" checked="checked" id="rememberme" /> <label for="rememberme">Remember me</label>
+						</p>
+					</form>
+					
+				</div>		<!-- .block_content ends -->
+					
+				<div class="bendl"></div>
+				<div class="bendr"></div>
+								
+			</div>		<!-- .login ends -->
+			
+		
+		</div>						<!-- wrapper ends -->
+		
+	</div>		<!-- #hld ends -->
+	
+	
+	<!--[if IE]><script type="text/javascript" src="/assets/javascripts/admin/excanvas.js"></script><![endif]-->	
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
+	<script type="text/javascript" src="/assets/javascripts/jquery-ui-1.8.18.custom.min.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.img.preload.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.filestyle.mini.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.date_input.pack.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/jquery.lightbox-0.5.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.visualize.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.visualize.tooltip.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.select_skin.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/ajaxupload.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/jquery.pngfix.js"></script>
+	<script type="text/javascript" src="/assets/javascripts/admin/custom.js"></script>
+	
+</body>
+</html>

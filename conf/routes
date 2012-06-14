@@ -3,7 +3,18 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
+GET		/login							controllers.Application.login()
+POST	/login							controllers.Application.authenticate()
+GET		/logout							controllers.Application.logout()
+GET		/								controllers.Application.home()
+GET     /jsRoutes                   	controllers.Application.javascriptRoutes()
+
+# Administrators
+GET		/administrators							controllers.Administrators.index()
+GET		/administrators/$id<[0-9a-zA-Z]+>		controllers.Administrators.edit(id: String)
+GET		/administrators/new						controllers.Administrators.create()
+POST	/administrators/delete					controllers.Administrators.delete()
+POST	/administrators/save					controllers.Administrators.save()
 
 #Data Collection
 GET		/track.gif							controllers.DataHub.track()
