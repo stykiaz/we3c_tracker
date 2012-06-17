@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import net.vz.mongodb.jackson.DBQuery;
 
@@ -12,6 +13,7 @@ import com.mongodb.BasicDBObject;
 
 import models.RecordedLocation;
 import models.TrackedAction;
+import play.api.templates.Html;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.preview.*;
@@ -45,11 +47,29 @@ public class Preview extends Controller {
 		Document doc;
 		try {
 			doc = Jsoup.connect( location.location ).get();
+//			doc = Jsoup.connect( "http://static.wethreecreatives.com/trees.html" ).get();
 		} catch( IOException e ) {
 			//TODO: send tonification
 			return internalServerError("IOException");
 		}
+		//Fix Paths
+		for(Element elem : doc.select("script")){
+			if( elem.attributes().hasKey("src") ) elem.attr("src", elem.absUrl("src"));
+		}
+		for(Element elem : doc.select("link")){
+			elem.attr("href", elem.absUrl("href"));
+		}
+		for(Element elem : doc.select("a")){
+			elem.attr("href", elem.absUrl("href"));
+		}
+		for(Element elem : doc.select("img")){
+			elem.attr("src", elem.absUrl("src"));
+		}
+		response().setHeader("Content-Type", "text/html; charset=utf-8");
 		return ok( doc.outerHtml() );
+	}
+	public static Result getActions( String locId ) {
+		return ok();
 	}
 	
 }

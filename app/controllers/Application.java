@@ -1,17 +1,7 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import net.vz.mongodb.jackson.DBQuery;
-
-
 import models.Administrator;
-import models.RecordedLocation;
-import models.TrackSession;
-import models.User;
 import play.*;
 import play.data.Form;
 import play.mvc.*;
@@ -36,12 +26,20 @@ public class Application extends Controller {
 	
 	public static Result authenticate() {
 		Form<AuthenticateReq> authRequest = form(AuthenticateReq.class).bindFromRequest();
-		models.Administrator.Model administrator;
-		try {
-			administrator = Administrator.coll.find(DBQuery.is("username", authRequest.get().username).is("password", Tools.md5Encode( authRequest.get().password ))).next();
-		} catch(NoSuchElementException e) {
-			administrator = null;
+		models.Administrator.Model administrator = null;
+		System.out.println( "test 1" );
+		System.out.println( Tools.md5Encode( authRequest.get().password ) );
+		if( authRequest.field("username").valueOr("").isEmpty() || authRequest.field("password").valueOr("").isEmpty() ) {
+			flash().put("form_error", "Bad username/password !");
+			return redirect( controllers.routes.Application.login() );
 		}
+		
+//		try {
+			administrator = Administrator.coll.find(DBQuery.is("username", authRequest.get().username).is("password", Tools.md5Encode( authRequest.get().password ))).next();
+//		} catch(NoSuchElementException e) {
+//			e.printStackTrace();
+//			administrator = null;
+//		}
 		
 		if( administrator != null ) {
 			session().put("admin_username", administrator.username);

@@ -42,7 +42,7 @@
 					
 					@if( flash().get("form_error") ) { <div class="message errormsg"><p>@flash().get("form_error")</p></div> }
 					
-					<form action="" method="post">
+					@helper.form(action = controllers.routes.Application.authenticate(), 'id -> "login_form") {
 						<p>
 							<label>Username:</label> <br />
 							<input type="text" class="text" value="" name="username"/>
@@ -57,7 +57,7 @@
 							<input type="submit" class="submit" value="Login" /> &nbsp; 
 							<input type="checkbox" class="checkbox" checked="checked" id="rememberme" /> <label for="rememberme">Remember me</label>
 						</p>
-					</form>
+					}
 					
 				</div>		<!-- .block_content ends -->
 					

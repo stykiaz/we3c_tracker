@@ -1,13 +1,16 @@
 $('#playback').load(function(){
-//	var document = $('#playback').get(0).document;
-	
+	var document = $('#playback').contents();
+	console.log( document );
 //	console.log( $('body',document ) );
 //	alert("1" );
 	function playbackCursor() {
-		this.theDocument = $('#playback').get(0).document;
-		this.theBody = $('body', this.theBody);
+		this.theDocument = $('#playback').contents();
+		this.theBody = $('body', this.theDocument);
+		this.cursorCode = '<div '+ 
+		 '    style="display: block; position: fixed; z-index: 9999; width: 32px; height: 32px; border: 1px solid red; '+
+		 '           background-image: url(\'/assets/images/site/cursors.png\'); background-position: 0 0;"></div>';
 		this.initCode = function() {
-			var cursorCode = '<div style="display: block; position: fixed; z-index: 9999; width: 32px; height: 32px;"></div>';
+			this.theBody.append( this.cursorCode );
 		}
 	}
 	
