@@ -3,22 +3,41 @@
 # ~~~~
 
 # Home page
-GET		/login							controllers.Application.login()
-POST	/login							controllers.Application.authenticate()
-GET		/logout							controllers.Application.logout()
-GET		/								controllers.Application.home()
-GET     /jsRoutes                   	controllers.Application.javascriptRoutes()
+GET		/login/									controllers.Application.login()
+POST	/login									controllers.Application.authenticate()
+GET		/logout/								controllers.Application.logout()
+GET		/										controllers.Application.home()
+GET     /jsRoutes/                   			controllers.Application.javascriptRoutes()
 
 # Administrators
-GET		/administrators							controllers.Administrators.index()
+GET		/administrators/						controllers.Administrators.index()
+GET		/administrators/new/					controllers.Administrators.create()
 GET		/administrators/$id<[0-9a-zA-Z]+>		controllers.Administrators.edit(id: String)
-GET		/administrators/new						controllers.Administrators.create()
 POST	/administrators/delete					controllers.Administrators.delete()
 POST	/administrators/save					controllers.Administrators.save()
 
+# Users
+GET		/users/									controllers.Users.index()
+GET		/users/new/								controllers.Users.create()
+GET		/users/$id<[0-9a-zA-Z]+>				controllers.Users.edit(id: String)
+POST	/users/delete							controllers.Users.delete()
+POST	/users/save								controllers.Users.save()
+
+#Tracked Sessions
+GET		/sessions/								controllers.TrackedSessions.index()
+#Tracked Locations
+GET		/tracked-locations/						controllers.RecordedLocations.index()
+
+	
+
 #Data Collection
-GET		/track.gif							controllers.DataHub.track()
-GET		/track-dummy.gif					controllers.DataHub.dummy()
+GET		/v1/track.gif							controllers.DataHub.track()
+GET		/v1/track-dummy.gif						controllers.DataHub.dummy()
+
+#View Session
+GET		/preview-tracked-location/$locId<[0-9a-zA-Z]+>		controllers.Preview.view(locId: String)
+GET		/location-proxy/$locId<[0-9a-zA-Z]+>				controllers.Preview.proxy(locId: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file               			controllers.Assets.at(path="/public", file)
+GET		/tracker-code/v1/js						controllers.Assets.at(path="/public", file="javascripts/tracker.js")

@@ -1,0 +1,35 @@
+@(location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model)
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=7" />
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<title>Preview Session</title>
+	
+    <style type="text/css" media="all">
+		@@import url("/assets/stylesheets/admin/style.css");
+		@@import url("/assets/stylesheets/jquery-ui-1.8.18.custom.css");
+    </style>
+	
+	<!--[if lt IE 8]><style type="text/css" media="all">@@import url("/assets/stylesheets/admin/ie.css");</style><![endif]-->
+
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
+
+</head>
+<body>
+	<p>
+		<span style="font-weight: bold;">Duration:</span> @models.RecordedLocation.getDuration(location)  
+		<span style="font-weight: bold;">Url:</span> <a href="@location.location" target="_blank">@location.location</a>
+		<span style="font-weight: bold;">Started At:</span> @location.startedAt 
+	</p>
+	<iframe id="playback" style="border: 1px solid black; width: @(firstAction.w)px; height: @(firstAction.h)px; " src="@routes.Preview.proxy(location._id)" ></iframe>
+
+	<script type="text/javascript" src="@routes.Application.javascriptRoutes()"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/preview.js")"></script>
+
+</body>
+</html>

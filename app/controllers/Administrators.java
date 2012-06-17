@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.DBCursor;
 
 import net.vz.mongodb.jackson.DBQuery;
@@ -44,20 +46,27 @@ public class Administrators extends Controller {
 		//Listview init
 	
 		Query adminQuery = DBQuery.exists("username");
-		net.vz.mongodb.jackson.DBCursor<models.Administrator> admins = models.Administrator.coll.find( adminQuery ).limit( params.resultsPerPage ).skip( params.resultsPerPage * params.p - params.resultsPerPage );
+		net.vz.mongodb.jackson.DBCursor<models.Administrator.Model> admins = models.Administrator.coll.find( adminQuery )
+																	   .limit( params.resultsPerPage ).skip( params.resultsPerPage * params.p - params.resultsPerPage );
+		
 		params.setTotalResults( models.Administrator.coll.find( adminQuery ).count() );
 		
 		return ok( listview.render( params , admins ) );
 	}
 	
 	public static Result edit(String id) {
-		models.Administrator admin = models.Administrator.coll.findOneById(id);
-		Form<Administrator> form = form(Administrator.class).fill(admin);		
+		models.Administrator.Model admin;
+		try {
+			admin = models.Administrator.coll.findOneById(id);
+		} catch( IllegalArgumentException e) {
+			return redirect(routes.Administrators.index());
+		}
+		Form<Administrator.Model> form = form(Administrator.Model.class).fill(admin);		
 		return ok( views.html.administrators.form.render("Edit Administrator", form) );
 	}
 	
 	public static Result create() {
-		Form<Administrator> form = form(Administrator.class);		
+		Form<Administrator.Model> form = form(Administrator.Model.class);		
 		return ok( views.html.administrators.form.render("New Administrator", form) );
 	}
 	
@@ -71,7 +80,7 @@ public class Administrators extends Controller {
 	}
 	
 	public static Result save() {
-		Form<Administrator> formAdmin = form(Administrator.class).bindFromRequest();
+		Form<Administrator.Model> formAdmin = form(Administrator.Model.class).bindFromRequest();
 		
 		if( formAdmin.field("username").value().isEmpty() ) formAdmin.reject("username", "Username can not be empty!");
 		if( formAdmin.hasErrors() ) {
@@ -79,7 +88,7 @@ public class Administrators extends Controller {
 			formAdmin.reject("username", "Required");
 		}
 		
-		if( Administrator.coll.find( DBQuery.is("username", formAdmin.field("username").valueOr("").trim() ).notEquals("_id", formAdmin.field("id").valueOr("-1")) ).count() > 0  ) {
+		if( !formAdmin.field("id").valueOr("").isEmpty() && Administrator.coll.find( DBQuery.is("username", formAdmin.field("username").valueOr("").trim() ).notEquals("_id", new ObjectId( formAdmin.field("id").valueOr("") ) ) ).count() > 0  ) {
 			flash().put("form_error", "Username is taken, please provide a unique one!");
 			flash().put("error_username", "Username is taken!");
 			formAdmin.reject("username", "Username is taken!");
@@ -106,12 +115,14 @@ public class Administrators extends Controller {
 		if( !formAdmin.field("password").valueOr("").isEmpty() ) {
 			formAdmin.get().password = utils.Tools.md5Encode( formAdmin.field("password").value() );
 		}
+		String id;
 		if( formAdmin.field("_id").valueOr("").isEmpty() ) {
 			formAdmin.get().createdAt = new Date();
+			id = Administrator.save( formAdmin.get() ).getSavedId();
 		} else {
 			formAdmin.get().lastUpdatedAt = new Date();
+			id = Administrator.update( formAdmin.field("_id").valueOr(""), formAdmin.get() ).getSavedId();
 		}
-		String id = formAdmin.get().save().getSavedId();
 		
 		flash().put("form_success", "Administrator is saved!");
 		return redirect( controllers.routes.Administrators.edit( id ) );

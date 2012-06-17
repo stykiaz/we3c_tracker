@@ -1,6 +1,9 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import net.vz.mongodb.jackson.DBQuery;
 
@@ -8,6 +11,7 @@ import net.vz.mongodb.jackson.DBQuery;
 import models.Administrator;
 import models.RecordedLocation;
 import models.TrackSession;
+import models.User;
 import play.*;
 import play.data.Form;
 import play.mvc.*;
@@ -32,8 +36,12 @@ public class Application extends Controller {
 	
 	public static Result authenticate() {
 		Form<AuthenticateReq> authRequest = form(AuthenticateReq.class).bindFromRequest();
-		
-		models.Administrator administrator = Administrator.coll.find(DBQuery.is("username", authRequest.get().username).is("password", Tools.md5Encode( authRequest.get().password ))).next();
+		models.Administrator.Model administrator;
+		try {
+			administrator = Administrator.coll.find(DBQuery.is("username", authRequest.get().username).is("password", Tools.md5Encode( authRequest.get().password ))).next();
+		} catch(NoSuchElementException e) {
+			administrator = null;
+		}
 		
 		if( administrator != null ) {
 			session().put("admin_username", administrator.username);
@@ -48,6 +56,28 @@ public class Application extends Controller {
 	public static Result home() {
 		Http.Context.current().args.put("admin_module", "Application");
 		Http.Context.current().args.put("admin_parent_section", "dashboard");
+		
+//		List<String> domains = new ArrayList<String>();
+//		domains.add(".example.com");
+//		domains.add("www.example1.com");
+//		domains.add("example2.com");
+//		String curr = "example.com";
+//		if( domains.contains(curr) ) return ok("ok");
+//		else {
+//			for(String in : domains) {
+//				if( in.substring(0, 1).equals(".") ) {
+//					if( curr.contains(in) || ( "."+curr ).contains( in ) ) return ok("ok");
+//				}
+//			}
+//		}
+//		
+//		Users user = new Users();
+//		user.domsins = new ArrayList<String>();
+//		user.domsins.add("111");
+//		user.domsins.add("222");
+//		user.domsins.add("333");
+//		user.save();
+		
 		return ok( home.render() );
 	}
 	

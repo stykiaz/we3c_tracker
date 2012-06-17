@@ -40,6 +40,8 @@
 				
 				<ul id="nav">
 					<li class="@if( getContextValueOr("admin_parent_section", "").equals("dashboard") ){active}"><a href="@controllers.routes.Application.home()">Dashboard</a></li>
+					<li class="@if( getContextValueOr("admin_parent_section", "").equals("users") ){active}"><a href="@controllers.routes.Users.index()">Users</a></li>
+					<li class="@if( getContextValueOr("admin_parent_section", "").equals("sessions") ){active}"><a href="@controllers.routes.TrackedSessions.index()">Sessions</a></li>
 					
 					<li class="@if( getContextValueOr("admin_parent_section", "").equals("settings") ){active}"><a href="#">Settings</a>
 						<ul>

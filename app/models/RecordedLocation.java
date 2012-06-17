@@ -13,23 +13,30 @@ import play.modules.mongodb.jackson.MongoDB;
 @MongoCollection(name = "recorded_location")
 public class RecordedLocation {
 
-	public static JacksonDBCollection<RecordedLocation, String> coll = MongoDB.getCollection("recorded_location", RecordedLocation.class, String.class);
+	public static JacksonDBCollection<RecordedLocation.Model, String> coll = MongoDB.getCollection("recorded_location", RecordedLocation.Model.class, String.class);
 	
-	@ObjectId
-	@Id
-	public String _id;
+	public static class Model {
 	
-	@ObjectId
-	public String sessionId;
+		@ObjectId
+		@Id
+		public String _id;
+		
+		@ObjectId
+		public String sessionId;
+		
+		public Date startedAt;
+		public Date lastActionAt;
+		
+		//TODO: separate domain, path
+		public String location;
+		
+	}
+	public static WriteResult<RecordedLocation.Model, String> save(Model ob) {
+		return coll.save(ob);
+	}
 	
-	public Date startedAt;
-	public Date lastActionAt;
-	
-	//TODO: separate domain, path
-	public String location;
-	
-	public WriteResult<RecordedLocation, String> save() {
-		return coll.save(this);
+	public static String getDuration(Model ob) {
+		return ( ( ob.lastActionAt.getTime() - ob.startedAt.getTime() ) / 100 ) + "s";
 	}
 	
 }

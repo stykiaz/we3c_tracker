@@ -1,4 +1,4 @@
-@(action: String, form: Form[models.Administrator])
+@(action: String, form: Form[models.Administrator.Model])
 
 @views.html.layout {
 		<div class="block">
@@ -24,7 +24,7 @@
 					@helper.form(action = controllers.routes.Administrators.save(), 'id -> "admin_form") {
 
 						<p>
-							<input type="hidden" name="_id" value="@form("_id").value()"/>
+							<input type="hidden" name="_id" value="@if( form("username").value() ) { @form.get()._id }"/>
 							<label>Username:</label><br />
 							<input type="text" class="text small" name="username" value="@form("username").value()"/> 
 							<span class="note error">@flash().get("error_username")</span>

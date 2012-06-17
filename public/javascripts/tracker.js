@@ -1,6 +1,6 @@
 function we3cTracker( config ) {
 	this.accountApiKey = config.accountId;
-	this.eventServer = 'http://localhost:9001/track.gif';
+	this.eventServer = 'http://192.168.0.12:9001/v1/track.gif';
 	this.location = document.location.href;
 	this.eventTypesList = { 'init': 0, 'mousedown': 1, 'mousemove': 2, 'resize': 3, 'scroll': 4, 'locationChange': 5 };
 	this.eventsRepo = [];
@@ -33,6 +33,9 @@ we3cTracker.prototype.trackEvent = function(e){
 			}
 			state['x'] = e.clientX;
 			state['y'] = e.clientY;
+			var tmp = _we3ctr.getWindowsSize();
+			state['w'] = tmp['w'];
+			state['h'] = tmp['h'];
 			_we3ctr.eventsRepo.push(state);
 			break;
 		case 'mousemove':
@@ -40,6 +43,9 @@ we3cTracker.prototype.trackEvent = function(e){
 			state['e'] = _we3ctr.eventTypesList[e.type];
 			state['x'] = e.clientX;
 			state['y'] = e.clientY;
+			var tmp = _we3ctr.getWindowsSize();
+			state['w'] = tmp['w'];
+			state['h'] = tmp['h'];
 			if( _we3ctr.eventsRepo.length >= 1 &&  _we3ctr.eventsRepo[ _we3ctr.eventsRepo.length - 1 ]['e'] == state['e'] ) {
 //				console.log( ( _we3ctr.eventsRepo[ _we3ctr.eventsRepo.length - 1 ]['x'] - state['x'] ) % 2, 
 //							_we3ctr.eventsRepo[ _we3ctr.eventsRepo.length - 1 ]['y'] - state['y'] );

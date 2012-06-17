@@ -1,0 +1,53 @@
+@(action: String, form: Form[models.User.Model])
+
+@views.html.layout {
+		<div class="block">
+			
+				<div class="block_head">
+					<div class="bheadl"></div>
+					<div class="bheadr"></div>
+					
+					<h2>Users</h2>
+					
+				</div>		<!-- .block_head ends -->
+				
+				
+				
+				<div class="block_content">
+					
+					<p class="breadcrumb"><a href="@controllers.routes.Application.home()">Dashboard</a> &raquo; <a href="@controllers.routes.Users.index()">Users</a> &raquo; <strong> @action </strong></p>
+				
+					@if( flash().get("form_error") ){ <div class="message errormsg"><p>@flash().get("form_error")</p></div> }
+					
+					@if( flash().get("form_success") ){ <div class="message success"><p>@flash().get("form_success")</p></div> }
+					
+					@helper.form(action = controllers.routes.Users.save(), 'id -> "admin_form") {
+
+						<p>
+							
+							<input type="hidden" name="_id" value="@if( form("username").value() ) {@form.get()._id}"/>
+							<label>Username:</label><br />
+							<input type="text" class="text small" name="username" value="@form("username").value()"/> 
+							@if( form("username").errors().size() > 0 ) { <span class="note error">@form("username").errors().get(0).message()</span> }
+						</p>
+						<p>
+							<label>Domains (comma separated) ( .example.com covers .example.com subdomains ):</label><br />
+							<input type="text" class="text small" name="domainsString" value="@form("domainsString").value()"/> 
+							@if( form("domainsString").errors().size() > 0 ) { <span class="note error">@form("domainsString").errors().get(0).message()</span> }
+						</p>
+								
+						<hr />
+						
+						<p>
+							<input type="submit" class="submit small" value="Save" />
+						</p>
+					}
+					
+					
+				</div>		<!-- .block_content ends -->
+				
+				<div class="bendl"></div>
+				<div class="bendr"></div>
+					
+			</div>		<!-- .block ends -->
+}

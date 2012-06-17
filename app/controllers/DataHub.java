@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.mongodb.MongoException;
+
 import models.RecordedLocation;
 import models.TrackSession;
 import models.TrackedAction;
+import models.User;
 import play.data.Form;
 import play.data.validation.Constraints.Required;
 import play.mvc.Controller;
@@ -26,19 +29,133 @@ public class DataHub extends Controller {
 	}
 	
 	public static Result track() {
-		
+		//TODO: match apikey to userid
+		//TODO: match domain to user's domains
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
-//		if( req.hasErrors() ) return badRequest();
+
+		if( req.hasErrors() ) return badRequest("Bad Request");
+		
+		TrackSession.Model trackSess = null;
+		User.Model user = null;
+		try {
+			 user = User.coll.findOneById( req.get().key );
+		} catch( MongoException e ) {
+			e.printStackTrace();
+			return internalServerError("No User");
+		}
+		if( user == null ) return badRequest("Bad key");
+		
+		if( !User.isDomainTrackable( req.get().host, user ) ) return forbidden("Bad Domain");
+		
+		if( session().containsKey("tracked_session") ) {
+			trackSess = TrackSession.coll.findOneById( session().get("tracked_session") );
+		} else {
+			trackSess = new TrackSession.Model();
+			trackSess.startedAt = new Date();
+			if( Context.current().request().headers().containsKey("USER-AGENT") && Context.current().request().headers().get("USER-AGENT").length > 0 ) trackSess.userAgent = Context.current().request().headers().get("USER-AGENT")[0];
+			if( Context.current().request().headers().containsKey("ACCEPT-LANGUAGE") && Context.current().request().headers().get("ACCEPT-LANGUAGE").length > 0 ) trackSess.language = Context.current().request().headers().get("ACCEPT-LANGUAGE")[0];
+			trackSess.host = req.get().host;
+			trackSess.userId = user._id;
+			trackSess._id =  TrackSession.save(trackSess).getSavedId();
+			session().put("tracked_session", trackSess._id);
+			//TODO: get client IP using http proxy
+		}
+		
+		RecordedLocation.Model loc = null;
+		if( session().containsKey("last_tracked_location") ) {
+			loc =  RecordedLocation.coll.findOneById( session().get("last_tracked_location") );
+		}
 		
 		String actionsString = new String( Base64.decode( req.get().d ) );
 		
-		System.out.println( actionsString );
+		String[] actions = actionsString.split("}");
+		Long lastTs = 0L;
+		for(int i = 0; i < actions.length; i++) {
+			String[] parts = actions[i].split("[|]");
+			if( parts.length < 1 ) continue;
+			TrackedAction.Model action = null;
+			try {
+				switch( Byte.valueOf( parts[0] ) ) {
+					case 0:
+						if( parts.length != 7 ) continue;
+						//TODO:Track domains and pageUrl
+						action = new TrackedAction.Model();
+						action.e = 0;
+						action.location = parts[1];
+						action.w = Short.valueOf( parts[2] );
+						action.h = Short.valueOf( parts[3] );
+						action.t = Short.valueOf( parts[4] );
+						action.l = Short.valueOf( parts[5] );
+						action.ts = Long.valueOf( parts[6] );
+						loc = new RecordedLocation.Model();
+						loc.sessionId = trackSess._id;
+						loc.startedAt = new Date( action.ts );
+						loc.location = parts[1];
+						loc._id = RecordedLocation.save( loc ).getSavedId();
+						session().put("last_tracked_location", loc._id);
+						break;
+					case 1:
+						if( parts.length != 6 ) continue;
+						action = new TrackedAction.Model();
+						action.e = 1;
+						action.x = Short.valueOf( parts[1] );
+						action.y = Short.valueOf( parts[2] );
+						action.w = Short.valueOf( parts[3] );
+						action.h = Short.valueOf( parts[4] );
+						action.ts = Long.valueOf( parts[5] );
+						break;
+					case 2:
+						if( parts.length != 6 ) continue;
+						action = new TrackedAction.Model();
+						action.e = 2;
+						action.x = Short.valueOf( parts[1] );
+						action.y = Short.valueOf( parts[2] );
+						action.w = Short.valueOf( parts[3] );
+						action.h = Short.valueOf( parts[4] );
+						action.ts = Long.valueOf( parts[5] );
+						break;
+					case 3:
+						if( parts.length != 4 ) continue;
+						action = new TrackedAction.Model();
+						action.e = 3;
+						action.w = Short.valueOf( parts[1] );
+						action.h = Short.valueOf( parts[2] );
+						action.ts = Long.valueOf( parts[3] );
+						break;
+					case 4:
+						if( parts.length != 5 ) continue;
+						action = new TrackedAction.Model();
+						action.e = 4;
+						action.t = Short.valueOf( parts[1] );
+						action.l = Short.valueOf( parts[2] );
+						action.d = parts[3];
+						action.ts = Long.valueOf( parts[4] );
+						break;
+					case 5:
+						break;
+				}
+			} catch(NumberFormatException e) {
+				continue;
+			}
+
+			if( action != null ) {
+				action.recLocId = loc._id;
+				TrackedAction.save(action);
+				lastTs = action.ts;
+			}
+		}
+		if( lastTs > 0 ) {
+			loc.lastActionAt = new Date( lastTs );
+			trackSess.lastActionAt = new Date( lastTs );
+			TrackSession.save( trackSess );
+		}
+		RecordedLocation.save( loc );
 		
 		response().setContentType( "image/gif" );
 		return ok();
 	}
 	
-	public static Result dummy() {
+	public static Result dummy() {/*
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
 		List<String> dummy = new ArrayList<String>(); 
 		dummy.add( "0|http://localhost/work/we3c/static/barebone.html#|1600|503|0|0|1339451636005}2|538|292|1339451636828}2|66|494|1339451638213}2|42|66|1339451638366}2|480|3|1339451638586}2|773|283|1339451638927}1|781|290|1339451639133}2|860|309|1339451639287}2|904|309|1339451639304}2|942|313|1339451639319}2|980|313|1339451639336}2|993|315|1339451639341}2|1350|261|1339451639607}1|1351|260|1339451639706}2|1346|260|1339451639874}2|1253|253|1339451639927}2|1230|255|1339451639935}2|881|246|1339451640021}2|860|249|1339451640033}2|762|247|1339451640078}2|691|275|1339451640209}2|680|275|1339451640225}2|654|278|1339451640271}4|2|0||1339451640322}4|128|0|d|1339451640701}2|563|384|1339451641061}2|532|382|1339451641156}2|523|383|1339451641227}2|485|375|1339451641382}2|398|467|1339451641476}2|369|467|1339451641586}2|340|471|1339451641820}1|339|471|1339451641849}2|336|470|1339451641976}2|227|464|1339451642029}2|198|466|1339451642038}2|0|295|1339451642186}2|218|241|1339451642505}2|470|277|1339451642569}2|503|277|1339451642577}2|532|279|1339451642585}2|557|279|1339451642591}2|744|310|1339451642663}2|759|310|1339451642672}2|783|315|1339451642686}2|796|315|1339451642694}2|807|320|1339451642701}2|816|320|1339451642712}2|979|398|1339451642935}2|1121|228|1339451643077}2|1121|205|1339451643085}2|1126|171|1339451643099}2|1126|136|1339451643123}2|715|236|1339451643381}2|574|233|1339451643405}2|523|235|1339451643413}2|443|232|1339451643427}2|408|234|1339451643435}2|314|201|1339451643529}2|316|186|1339451643537}" );
@@ -70,6 +187,7 @@ public class DataHub extends Controller {
 			if( Context.current().request().headers().containsKey("USER-AGENT") && Context.current().request().headers().get("USER-AGENT").length > 0 ) trackSess.userAgent = Context.current().request().headers().get("USER-AGENT")[0];
 			if( Context.current().request().headers().containsKey("ACCEPT-LANGUAGE") && Context.current().request().headers().get("ACCEPT-LANGUAGE").length > 0 ) trackSess.language = Context.current().request().headers().get("ACCEPT-LANGUAGE")[0];
 			trackSess.host = Context.current().request().host();
+			trackSess.userId = "4fdbb93244ae12efb6839f8d";
 			trackSess._id = trackSess.save().getSavedId();
 			
 			session().put("tracked_session", trackSess._id);
@@ -89,7 +207,7 @@ public class DataHub extends Controller {
 				try {
 					switch( Byte.valueOf( parts[0] ) ) {
 						case 0:
-							if( parts.length != 3 ) continue;
+							if( parts.length != 7 ) continue;
 							//TODO:Track domains and pageUrl
 							action = new TrackedAction();
 							action.e = 0;
@@ -144,6 +262,7 @@ public class DataHub extends Controller {
 				} catch(NumberFormatException e) {
 					continue;
 				}
+
 				if( action != null ) {
 					action.recLocId = loc._id;
 					action.save();
@@ -156,7 +275,7 @@ public class DataHub extends Controller {
 				trackSess.save();
 			}
 			loc.save();
-		}
+		}*/
 		return ok();
 	}
 	

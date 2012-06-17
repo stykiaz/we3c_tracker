@@ -1,12 +1,15 @@
-@(params: utils.BasicRequests.listingRequest, data: net.vz.mongodb.jackson.DBCursor[models.Administrator.Model] )
+@(params: utils.BasicRequests.listingRequest, data: net.vz.mongodb.jackson.DBCursor[models.User.Model] )
 
-@administratorRow( row : models.Administrator.Model ) = {
+@resultRow( row : models.User.Model ) = {
 	<tr id="row_@row._id">
 		<td><input type="checkbox" name="delete_cb[]" value="@row._id"/></td>
-		<td><a href="@controllers.routes.Administrators.edit( row._id )">@row.username</a></td>
+		<td><a href="@controllers.routes.Users.edit( row._id )">@row.username</a></td>
 		<td>@row.createdAt</td>
 		<td>@row.lastLoginAt</td>
-		<td class="delete"><a href="#" class="delete" rel="@controllers.routes.Administrators.delete()" id="@row._id">Delete</a></td>
+		<td class="delete">
+			<a href="@controllers.routes.TrackedSessions.index()?userId=@row._id" >Sessions (@models.User.getSessionsCount( row ))</a> |  
+			<a href="#" class="delete" rel="@controllers.routes.Users.delete()" id="@row._id">Delete</a>
+		</td>
 	</tr>
 	
 }
@@ -19,11 +22,11 @@
 					<div class="bheadl"></div>
 					<div class="bheadr"></div>
 					
-					<h2>Administrators</h2>
+					<h2>Users</h2>
 					
 					<ul>
 						<!--<li><a href="#">Edit pages</a></li>-->
-						<li><a href="@controllers.routes.Administrators.create()"><span class="addItemBigPlus"></span>Add administrator</a></li>
+						<li><a href="@controllers.routes.Users.create()"><span class="addItemBigPlus"></span>Add user</a></li>
 					</ul>
 				</div>		<!-- .block_head ends -->
 				
@@ -45,20 +48,19 @@
 							
 							<tbody>
 								@for( ind <- 1 to data.count() ) {
-									@administratorRow(data.next())
+									
+									@resultRow(data.next())
 								}
-
 							</tbody>
-							
 						</table>
 						
 						@if( params.getTotalPages() > 1 ) {
 							<div class="pagination right">
-								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.Administrators.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
+								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.Users.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
 								@for( cnt <- 1 to params.getTotalPages() ) {
-									<a href="@(controllers.routes.Administrators.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
+									<a href="@(controllers.routes.Users.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
 								}
-								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.Administrators.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }
+								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.Users.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }
 							</div>		<!-- .pagination ends -->
 						}
 					</form>
