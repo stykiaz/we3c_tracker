@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.NoSuchElementException;
+
 import net.vz.mongodb.jackson.DBQuery;
 import models.Administrator;
 import play.*;
@@ -34,12 +36,12 @@ public class Application extends Controller {
 			return redirect( controllers.routes.Application.login() );
 		}
 		
-//		try {
+		try {
 			administrator = Administrator.coll.find(DBQuery.is("username", authRequest.get().username).is("password", Tools.md5Encode( authRequest.get().password ))).next();
-//		} catch(NoSuchElementException e) {
-//			e.printStackTrace();
-//			administrator = null;
-//		}
+		} catch(NoSuchElementException e) {
+			e.printStackTrace();
+			administrator = null;
+		}
 		
 		if( administrator != null ) {
 			session().put("admin_username", administrator.username);
