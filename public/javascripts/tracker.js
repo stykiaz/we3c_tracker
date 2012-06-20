@@ -1,8 +1,7 @@
 function we3cTracker( config ) {
 	this.accountApiKey = config.accountId;
-	//TODO: check http/https
 	//TODO: load appropriate domain
-	this.eventServer = 'http://clickheat.wethreecreatives.com/v1/track.gif';
+	this.eventServer = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'clickheat.wethreecreatives.com/v1/track.gif';
 	this.location = document.location.href;
 	this.eventTypesList = { 'init': 0, 'mousedown': 1, 'mousemove': 2, 'resize': 3, 'scroll': 4, 'locationChange': 5 };
 	this.eventsRepo = [];
@@ -14,6 +13,7 @@ we3cTracker.prototype.trackEvent = function(e){
 	var state = {'ts': new Date().getTime() };
 	switch( e.type ) {
 		case 'init':
+			_we3ctr.submitSessionStorage();
 			state['e'] = _we3ctr.eventTypesList[e.type];
 			state['loc'] = document.location.toString();
 			var tmp = _we3ctr.getWindowsSize();
@@ -24,9 +24,7 @@ we3cTracker.prototype.trackEvent = function(e){
 			this.eventsRepo.push(state);
 			break;
 		case 'unload':
-			if( _we3ctr.eventsRepo.length < 5 ) return;
-			_we3ctr.offloadData();
-			_we3ctr.lastMouseMoveState = [0, 0];
+			_we3ctr.storeToSessionStorage();
 			return;
 		case 'mousedown':
 			//track mouse downs only one per second
@@ -42,7 +40,7 @@ we3cTracker.prototype.trackEvent = function(e){
 			_we3ctr.eventsRepo.push(state);
 			break;
 		case 'mousemove':
-			//track mouse move only if durection has changed!
+			//track mouse move only if direction has changed!
 			state['e'] = _we3ctr.eventTypesList[e.type];
 			state['x'] = e.clientX;
 			state['y'] = e.clientY;
@@ -113,13 +111,34 @@ we3cTracker.prototype.trackEvent = function(e){
 //	console.log( state );
 	
 }
+we3cTracker.prototype.storeToSessionStorage = function() {
+	if(typeof(Storage)!=="undefined") {
+		var stringified = this.repoStringify( this.eventsRepo )
+		sessionStorage._we3cTrackerStoredState = stringified; 
+	} else { 
+		//sorry, no session storage supported, keep up!
+	}
+	return;
+	
+}
+we3cTracker.prototype.submitSessionStorage = function() {
+	if( sessionStorage._we3cTrackerStoredState == null ) return;
+	this.submitData( this.base64Encode( sessionStorage._we3cTrackerStoredState ) );
+	sessionStorage._we3cTrackerStoredState = null;
+}
+we3cTracker.prototype.periodicOffload = function() {
+//	console.log( this.eventsRepo.length );
+//	console.log( this.eventsRepo[ this.eventsRepo.length - 1 ].ts );
+//	console.log( new Date().getTime() - this.eventsRepo[ this.eventsRepo.length - 1 ].ts );
+	if( this.eventsRepo.length > 0 &&  ( new Date().getTime() - this.eventsRepo[ this.eventsRepo.length - 1 ].ts ) > 10000 ) {
+		this.offloadData();
+	}
+	setTimeout( '_we3ctr.periodicOffload()', 10000 );
+}
 we3cTracker.prototype.offloadData = function() {
 	var currentRepo = this.eventsRepo;
 	this.eventsRepo = [];
 	var stringified = this.repoStringify( currentRepo );
-//	alert( stringified );
-//	alert( this.base64Encode( stringified ) );
-//	console.log( this.base64Encode( stringified ).length );
 	this.submitData( this.base64Encode( stringified ) );
 }
 we3cTracker.prototype.submitData = function(repoString) {
@@ -212,3 +231,4 @@ we3cTracker.prototype.base64Encode = function(data) {
 }
 _we3ctr = new we3cTracker( _we3ctr );
 _we3ctr.initTracking();
+setTimeout( '_we3ctr.periodicOffload()', 10000 );

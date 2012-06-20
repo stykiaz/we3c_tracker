@@ -32,11 +32,18 @@ public class DataHub extends Controller {
 	}
 	
 	public static Result track() {
-		//TODO: match apikey to userid
-		//TODO: match domain to user's domains
+		response().setContentType( "image/png" );
+		File outGif;
+		try {
+			outGif = new File( Play.application().path().getCanonicalPath() + "/public/images/site/blank.png" );
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return ok();
+		}
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
 
-		if( req.hasErrors() ) return badRequest("Bad Request");
+		if( req.hasErrors() ) return badRequest( outGif );
 		
 		TrackSession.Model trackSess = null;
 		User.Model user = null;
@@ -46,9 +53,9 @@ public class DataHub extends Controller {
 			e.printStackTrace();
 			return internalServerError("No User");
 		}
-		if( user == null ) return badRequest("Bad key");
+		if( user == null ) return badRequest( outGif );
 		
-		if( !User.isDomainTrackable( req.get().host, user ) ) return forbidden("Bad Domain");
+		if( !User.isDomainTrackable( req.get().host, user ) ) return forbidden( outGif );
 		
 		if( session().containsKey("tracked_session") ) {
 			trackSess = TrackSession.coll.findOneById( session().get("tracked_session") );
@@ -155,13 +162,7 @@ public class DataHub extends Controller {
 		RecordedLocation.save( loc );
 		
 		response().setContentType( "image/png" );
-		try {
-			return ok( new File( Play.application().path().getCanonicalPath() + "/public/images/site/blank.png" ) );
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return ok();
-		}
+		return ok( outGif );
 		
 	}
 	
