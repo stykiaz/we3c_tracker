@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,17 +34,12 @@ public class DataHub extends Controller {
 	
 	public static Result track() {
 		response().setContentType( "image/png" );
-		File outGif;
-		try {
-			outGif = new File( Play.application().path().getCanonicalPath() + "/public/images/site/blank.png" );
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return ok();
-		}
+
+		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
+		
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
 
-		if( req.hasErrors() ) return badRequest( outGif );
+		if( req.hasErrors() ) return badRequest( outGifStream );
 		
 		TrackSession.Model trackSess = null;
 		User.Model user = null;
@@ -53,9 +49,9 @@ public class DataHub extends Controller {
 			e.printStackTrace();
 			return internalServerError("No User");
 		}
-		if( user == null ) return badRequest( outGif );
+		if( user == null ) return badRequest( outGifStream );
 		
-		if( !User.isDomainTrackable( req.get().host, user ) ) return forbidden( outGif );
+		if( !User.isDomainTrackable( req.get().host, user ) ) return forbidden( outGifStream );
 		
 		if( session().containsKey("tracked_session") ) {
 			trackSess = TrackSession.coll.findOneById( session().get("tracked_session") );
@@ -162,7 +158,7 @@ public class DataHub extends Controller {
 		RecordedLocation.save( loc );
 		
 		response().setContentType( "image/png" );
-		return ok( outGif );
+		return ok( outGifStream );
 		
 	}
 	

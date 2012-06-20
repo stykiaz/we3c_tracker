@@ -42,3 +42,4 @@ GET		/preview/get-data/$locId<[0-9a-zA-Z]+>				controllers.Preview.getData(locId
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)
 GET		/tracker-code/v1/js						controllers.Assets.at(path="/public", file="javascripts/tracker.js")
+GET		/tracker-code/v1/min.js					controllers.Assets.at(path="/public", file="javascripts/tracker.min.js")
