@@ -1,6 +1,8 @@
 function we3cTracker( config ) {
 	this.accountApiKey = config.accountId;
-	this.eventServer = 'http://192.168.0.12:9001/v1/track.gif';
+	//TODO: check http/https
+	//TODO: load appropriate domain
+	this.eventServer = 'http://clickheat.wethreecreatives.com/v1/track.gif';
 	this.location = document.location.href;
 	this.eventTypesList = { 'init': 0, 'mousedown': 1, 'mousemove': 2, 'resize': 3, 'scroll': 4, 'locationChange': 5 };
 	this.eventsRepo = [];
