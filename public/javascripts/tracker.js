@@ -122,7 +122,7 @@ we3cTracker.prototype.storeToSessionStorage = function() {
 	
 }
 we3cTracker.prototype.submitSessionStorage = function() {
-	if( sessionStorage._we3cTrackerStoredState == null ) return;
+	if( sessionStorage._we3cTrackerStoredState == null || !sessionStorage._we3cTrackerStoredState || sessionStorage._we3cTrackerStoredState.length < 3 ) return;
 	this.submitData( this.base64Encode( sessionStorage._we3cTrackerStoredState ) );
 	sessionStorage._we3cTrackerStoredState = null;
 }
