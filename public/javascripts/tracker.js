@@ -22,6 +22,7 @@ we3cTracker.prototype.trackEvent = function(e){
 			this.eventsRepo.push(state);
 			break;
 		case 'unload':
+			if( _we3ctr.eventsRepo.length < 5 ) return;
 			_we3ctr.offloadData();
 			_we3ctr.lastMouseMoveState = [0, 0];
 			return;

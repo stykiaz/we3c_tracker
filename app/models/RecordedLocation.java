@@ -2,6 +2,8 @@ package models;
 
 import java.util.Date;
 
+import com.mongodb.BasicDBObject;
+
 import net.vz.mongodb.jackson.Id;
 import net.vz.mongodb.jackson.JacksonDBCollection;
 import net.vz.mongodb.jackson.MongoCollection;
@@ -32,11 +34,13 @@ public class RecordedLocation {
 		
 	}
 	public static WriteResult<RecordedLocation.Model, String> save(Model ob) {
-		return coll.save(ob);
+		WriteResult<RecordedLocation.Model, String> tmp = coll.save(ob); 
+		coll.ensureIndex( new BasicDBObject("sessionId", 1) );
+		return tmp;
 	}
 	
 	public static String getDuration(Model ob) {
-		return ( ( ob.lastActionAt.getTime() - ob.startedAt.getTime() ) / 100 ) + "s";
+		return ( ( ob.lastActionAt.getTime() - ob.startedAt.getTime() ) / 1000 ) + "s";
 	}
 	
 }

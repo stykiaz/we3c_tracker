@@ -3,6 +3,8 @@ package models;
 import java.util.Date;
 import java.util.List;
 
+import com.mongodb.BasicDBObject;
+
 import play.modules.mongodb.jackson.MongoDB;
 import net.vz.mongodb.jackson.DBQuery;
 import net.vz.mongodb.jackson.DBRef;
@@ -33,7 +35,9 @@ public class TrackSession {
 		public String userId;
 	}
 	public static WriteResult<TrackSession.Model, String> save(TrackSession.Model ob) {
-		return coll.save(ob);
+		WriteResult<TrackSession.Model, String> tmp = coll.save(ob);
+		coll.ensureIndex( new BasicDBObject("userId", 1) );
+		return tmp;
 	}
 	
 	public static int getLocationsCount( Model ob ) {

@@ -1,5 +1,7 @@
 package controllers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +12,7 @@ import models.RecordedLocation;
 import models.TrackSession;
 import models.TrackedAction;
 import models.User;
+import play.Play;
 import play.data.Form;
 import play.data.validation.Constraints.Required;
 import play.mvc.Controller;
@@ -94,7 +97,7 @@ public class DataHub extends Controller {
 						loc._id = RecordedLocation.save( loc ).getSavedId();
 						session().put("last_tracked_location", loc._id);
 						break;
-					case 1:
+					case 1: //mouse down
 						if( parts.length != 6 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 1;
@@ -104,7 +107,7 @@ public class DataHub extends Controller {
 						action.h = Short.valueOf( parts[4] );
 						action.ts = Long.valueOf( parts[5] );
 						break;
-					case 2:
+					case 2: //move
 						if( parts.length != 6 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 2;
@@ -114,7 +117,7 @@ public class DataHub extends Controller {
 						action.h = Short.valueOf( parts[4] );
 						action.ts = Long.valueOf( parts[5] );
 						break;
-					case 3:
+					case 3: //resize
 						if( parts.length != 4 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 3;
@@ -122,7 +125,7 @@ public class DataHub extends Controller {
 						action.h = Short.valueOf( parts[2] );
 						action.ts = Long.valueOf( parts[3] );
 						break;
-					case 4:
+					case 4: //scroll
 						if( parts.length != 5 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 4;
@@ -151,8 +154,15 @@ public class DataHub extends Controller {
 		}
 		RecordedLocation.save( loc );
 		
-		response().setContentType( "image/gif" );
-		return ok();
+		response().setContentType( "image/png" );
+		try {
+			return ok( new File( Play.application().path().getCanonicalPath() + "/public/images/site/blank.png" ) );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ok();
+		}
+		
 	}
 	
 	public static Result dummy() {/*

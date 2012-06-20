@@ -37,6 +37,7 @@ GET		/v1/track-dummy.gif						controllers.DataHub.dummy()
 #View Session
 GET		/preview-tracked-location/$locId<[0-9a-zA-Z]+>		controllers.Preview.view(locId: String)
 GET		/location-proxy/$locId<[0-9a-zA-Z]+>				controllers.Preview.proxy(locId: String)
+GET		/preview/get-data/$locId<[0-9a-zA-Z]+>				controllers.Preview.getData(locId: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

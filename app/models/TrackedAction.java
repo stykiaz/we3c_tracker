@@ -1,5 +1,7 @@
 package models;
 
+import com.mongodb.BasicDBObject;
+
 import net.vz.mongodb.jackson.Id;
 import net.vz.mongodb.jackson.JacksonDBCollection;
 import net.vz.mongodb.jackson.MongoCollection;
@@ -36,7 +38,9 @@ public class TrackedAction {
 					l; //left scroll
 	}
 	public static WriteResult<TrackedAction.Model, String> save(TrackedAction.Model ob) {
-		return coll.save( ob );
+		WriteResult<TrackedAction.Model, String> tmp = coll.save( ob );
+		coll.ensureIndex( new BasicDBObject("sessionId", 1).append("recLocId", 1) );
+		return tmp;
 	}
 	
 }

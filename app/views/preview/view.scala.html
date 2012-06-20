@@ -22,13 +22,17 @@
 </head>
 <body>
 	<p>
-		<span style="font-weight: bold;">Duration:</span> @models.RecordedLocation.getDuration(location)  
 		<span style="font-weight: bold;">Url:</span> <a href="@location.location" target="_blank">@location.location</a>
 		<span style="font-weight: bold;">Started At:</span> @location.startedAt 
+		<span style="font-weight: bold;">Duration:</span> @models.RecordedLocation.getDuration(location)  
+		<span style="font-weight: bold;">Current Playback:</span> <span id="current_playback">0</span>  
 	</p>
 	<iframe id="playback" style="border: 1px solid black; width: @(firstAction.w)px; height: @(firstAction.h)px; " src="@routes.Preview.proxy(location._id)" ></iframe>
 
 	<script type="text/javascript" src="@routes.Application.javascriptRoutes()"></script>
+	<script type="text/javascript">
+		var viewLocationId = '@location._id';
+	</script>
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/preview.js")"></script>
 
 </body>
