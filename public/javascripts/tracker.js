@@ -143,7 +143,7 @@ we3cTracker.prototype.offloadData = function() {
 }
 we3cTracker.prototype.submitData = function(repoString) {
 	var datIm = new Image(); 
-	datIm.src = this.eventServer+"?d="+repoString+"&host="+document.location.host+"&key="+this.accountApiKey; 
+	datIm.src = this.eventServer+"?d="+repoString+"&host="+document.location.host+"&key="+this.accountApiKey;
 	
 }
 we3cTracker.prototype.repoStringify = function( repo ) {
