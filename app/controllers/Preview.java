@@ -84,6 +84,7 @@ public class Preview extends Controller {
 			if( elem.attributes().hasKey("src") ) elem.attr("src", elem.absUrl("src"));
 			else {
 				if( elem.html().indexOf("we3cres") >= 0 && elem.html().indexOf("_we3ctr") >= 0 ) elem = elem.html("");
+				else if( elem.html().indexOf("google-analytics.com") >= 0 ) elem = elem.html("");
 			}
 		}
 		for(Element elem : doc.select("link")){
