@@ -37,7 +37,7 @@ $('#playback').load(function(){
 		}
 		
 		this.putClick = function( position ) {
-			var id = position.ts;
+			var id = position.ts; 
 			var clickCode = this.clickCodeCode.replace("{id}", id).replace("{top}", parseInt( position.y ) - 16).replace("{left}", parseInt( position.x ) - 16 );
 			this.theBody.append( clickCode );
 			setTimeout( '$("#we3ctracker_click_'+id+'", we3cPlayback.theBody).fadeOut("fast")', 300 );
