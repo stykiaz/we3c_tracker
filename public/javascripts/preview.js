@@ -1,9 +1,7 @@
 var we3cPlayback = null;
 $('#playback').load(function(){
 	var document = $('#playback').contents();
-//	console.log( document );
-//	console.log( $('body',document ) );
-//	alert("1" );
+
 	function playbackCursor( locationId ) {
 		this.theIframe = $('#playback');
 		this.theDocument = $('#playback').get(0).contentWindow.document;
@@ -40,11 +38,11 @@ $('#playback').load(function(){
 		
 		this.putClick = function( position ) {
 			var id = position.ts;
-			var clickCode = this.clickCodeCode.replace("{id}", id).replace("{top}", position.y).replace("{left}", position.x);
+			var clickCode = this.clickCodeCode.replace("{id}", id).replace("{top}", parseInt( position.y ) - 16).replace("{left}", parseInt( position.x ) - 16 );
 			this.theBody.append( clickCode );
 			setTimeout( '$("#we3ctracker_click_'+id+'", we3cPlayback.theBody).fadeOut("fast")', 300 );
 		}
-		
+		//playback the action
 		this.playBack = function() {
 //			console.log( this.data[0].e );
 			switch( parseInt( this.data[0].e ) ) {
