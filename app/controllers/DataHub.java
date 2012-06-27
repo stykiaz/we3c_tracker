@@ -52,7 +52,11 @@ public class DataHub extends Controller {
 		}
 		if( user == null ) return badRequest( outGifStream );
 		
-		if( !User.isDomainTrackable( req.get().host, user ) ) return forbidden( outGifStream );
+		if( !User.isDomainTrackable( req.get().host, user ) ) {
+			System.out.println("Bad Domain: "+req.get().host);
+			return forbidden( outGifStream );
+		}
+		System.out.println("Good Domain: "+req.get().host);
 		
 		if( session().containsKey("tracked_session") ) {
 			trackSess = TrackSession.coll.findOneById( session().get("tracked_session") );
@@ -84,7 +88,7 @@ public class DataHub extends Controller {
 		}
 		
 		String actionsString = new String( Base64.decode( req.get().d ) );
-		
+		System.out.println( actionsString );
 		String[] actions = actionsString.split("}");
 		Long lastTs = 0L;
 		for(int i = 0; i < actions.length; i++) {
