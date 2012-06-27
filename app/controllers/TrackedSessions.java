@@ -49,16 +49,17 @@ public class TrackedSessions extends Controller {
 		listingRequest params = form( listingRequest.class ).bindFromRequest().get();
 		//Listview init
 	
-		Query adminQuery = DBQuery.exists("host");
+		Query adminQuery = DBQuery.exists("host").exists("lastActionAt");
 		if( params.userId != null && !params.userId.isEmpty() )  {
 			adminQuery.is("userId", new ObjectId( params.userId ) );
 		}
-		net.vz.mongodb.jackson.DBCursor<TrackSession.Model> admins = models.TrackSession.coll.find( adminQuery )
-															  .limit( params.resultsPerPage ).skip( params.resultsPerPage * params.p - params.resultsPerPage )
+		
+		net.vz.mongodb.jackson.DBCursor<TrackSession.Model> admins = models.TrackSession.coll.find( adminQuery ).skip( params.resultsPerPage * params.p - params.resultsPerPage )
+															  .limit( params.resultsPerPage )
 															  .sort( new BasicDBObject("lastActionAt", -1) );
 		
 		params.setTotalResults( models.TrackSession.coll.find( adminQuery ).count() );
-		
+		//TODO: only list session with tracked actions ?
 		return ok( listview.render( params , admins ) );
 	}
 	

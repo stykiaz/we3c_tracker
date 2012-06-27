@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.bitwalker.useragentutils.UserAgent;
+
 import com.mongodb.MongoException;
 
 import models.RecordedLocation;
@@ -34,7 +36,6 @@ public class DataHub extends Controller {
 	
 	public static Result track() {
 		response().setContentType( "image/png" );
-
 		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
 		
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
@@ -58,8 +59,18 @@ public class DataHub extends Controller {
 		} else {
 			trackSess = new TrackSession.Model();
 			trackSess.startedAt = new Date();
-			if( Context.current().request().headers().containsKey("USER-AGENT") && Context.current().request().headers().get("USER-AGENT").length > 0 ) trackSess.userAgent = Context.current().request().headers().get("USER-AGENT")[0];
-			if( Context.current().request().headers().containsKey("ACCEPT-LANGUAGE") && Context.current().request().headers().get("ACCEPT-LANGUAGE").length > 0 ) trackSess.language = Context.current().request().headers().get("ACCEPT-LANGUAGE")[0];
+			if( Context.current().request().headers().containsKey("USER-AGENT") && Context.current().request().headers().get("USER-AGENT").length > 0 ) {
+				trackSess.userAgent = Context.current().request().headers().get("USER-AGENT")[0];
+				UserAgent userAgent = UserAgent.parseUserAgentString( trackSess.userAgent );
+				trackSess.os = userAgent.getOperatingSystem().name();
+				trackSess.browser = userAgent.getBrowser().name();
+			}
+			if( Context.current().request().headers().containsKey("ACCEPT-LANGUAGE") && Context.current().request().headers().get("ACCEPT-LANGUAGE").length > 0 ) {
+				trackSess.language = Context.current().request().headers().get("ACCEPT-LANGUAGE")[0];
+				String[] languages = trackSess.language.split(",");
+				if( languages.length > 1 ) trackSess.mainLanguage = languages[0];
+				else trackSess.mainLanguage = trackSess.language;
+			}
 			trackSess.host = req.get().host;
 			trackSess.userId = user._id;
 			trackSess._id =  TrackSession.save(trackSess).getSavedId();
@@ -98,6 +109,9 @@ public class DataHub extends Controller {
 						loc.startedAt = new Date( action.ts );
 						loc.location = parts[1];
 						loc._id = RecordedLocation.save( loc ).getSavedId();
+						if( trackSess.firstActionAt == null ) { 
+							trackSess.firstActionAt = new Date( action.ts ); TrackSession.save(trackSess);
+						}
 						session().put("last_tracked_location", loc._id);
 						break;
 					case 1: //mouse down

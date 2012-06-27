@@ -29,8 +29,7 @@ public class Application extends Controller {
 	public static Result authenticate() {
 		Form<AuthenticateReq> authRequest = form(AuthenticateReq.class).bindFromRequest();
 		models.Administrator.Model administrator = null;
-		System.out.println( "test 1" );
-		System.out.println( Tools.md5Encode( authRequest.get().password ) );
+		
 		if( authRequest.field("username").valueOr("").isEmpty() || authRequest.field("password").valueOr("").isEmpty() ) {
 			flash().put("form_error", "Bad username/password !");
 			return redirect( controllers.routes.Application.login() );

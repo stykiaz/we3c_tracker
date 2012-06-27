@@ -4,10 +4,11 @@
 	<tr id="row_@row._id">
 		<td>@row.startedAt</td>
 		<td>@row.lastActionAt</td>
-		<td>@row.userAgent</td>
-		<td>@row.language</td>
+		<td><a title="@row.userAgent">@models.TrackSession.getOS(row) @models.TrackSession.getBrowser(row)</a></td>
+		<td>@models.TrackSession.getLanguage(row)</td>
 		<td>@row.host</td>
-		<td ><a href="@routes.RecordedLocations.index()?sessId=@row._id" class="" rel="" >Pages/Locations (@models.TrackSession.getLocationsCount( row ))</a></td>
+		<td>@models.TrackSession.getDuration( row )</td>
+		<td ><a href="@routes.RecordedLocations.index()?sessId=@row._id" class="" rel="" >View Pages (@models.TrackSession.getLocationsCount( row ))</a></td>
 	</tr>
 	
 }
@@ -37,13 +38,13 @@
 									<td>User Agent</td>
 									<td>Language</td>
 									<td>Host</td>
+									<td>Duration</td>
 									<td>&nbsp;</td>
 								</tr>
 							</thead>
 							
 							<tbody>
 								@for( ind <- 1 to data.size() ) {
-									
 									@resultRow(data.next())
 								}
 							</tbody>

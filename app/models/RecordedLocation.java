@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.mongodb.BasicDBObject;
 
+import models.TrackSession.Model;
 import net.vz.mongodb.jackson.Id;
 import net.vz.mongodb.jackson.JacksonDBCollection;
 import net.vz.mongodb.jackson.MongoCollection;
@@ -39,8 +40,13 @@ public class RecordedLocation {
 		return tmp;
 	}
 	
-	public static String getDuration(Model ob) {
-		return ( ( ob.lastActionAt.getTime() - ob.startedAt.getTime() ) / 1000 ) + "s";
+	public static Long getDurationSeconds(Model ob) {
+		return ( ( ob.lastActionAt.getTime() - ob.startedAt.getTime() ) / 1000 );
 	}
-	
+	public static String getDuration(Model ob) {
+		Long seconds = getDurationSeconds(ob);
+		Long min = seconds / 60;
+		Long leftSeconds = seconds % 60 ;
+		return min+":"+leftSeconds;
+	}
 }

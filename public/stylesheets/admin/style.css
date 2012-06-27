@@ -1005,46 +1005,31 @@ a:hover {
 
 /* Footer */
 
-#footer {
-	background: url(/assets/images/admin/ft.gif) 0 0 repeat-x;
-	padding: 10px 0 50px;
-	font-size: 10px;
-	color: #757575;
-	clear: both;
-	overflow: hidden;
-	}
+#footer { background: url(/assets/images/admin/ft.gif) 0 0 repeat-x; padding: 10px 0 50px; font-size: 10px; color: #757575; clear: both; overflow: hidden; }
 	
-#footer a {
-	color: #757575;
-	text-decoration: underline;
-	}
+#footer a { color: #757575; text-decoration: underline; }
 
-#footer a:hover {
-	color: #666;
-	text-decoration: none;
-	}
+#footer a:hover { color: #666; text-decoration: none; }
 	
-#footer .left {
-	float: left;
-	}
+#footer .left { float: left; }
 	
-#footer .right {
-	float: right;
-	text-align: right;
-	}
+#footer .right { float: right; text-align: right; }
 /*BEGIN: icons */
 .icons a { display: block; float: left; width: 16px; height: 16px; margin-right: 4px; }
 .icons a.icon { background-image: url('/assets/images/site/PI_Diagon_Icons.jpg'); }
 .icons a.icon.primary, .icons a.icon.primary.active:hover { background-position: -310px -207px; }
 .icons a.icon.primary.active, .icons a.icon.primary:hover { background-position: -402px -207px; }
-
 .icons a.icon.authorised, .icons a.icon.authorised.active:hover { background-position: -172px -77px; }
 .icons a.icon.authorised.active, .icons a.icon.authorised:hover { background-position: -126px -77px; }
-
 .icons a.icon.registered_addr { background-position: -218px -77px; }
 .icons a.icon.billing_addr { background-position: -402px -103px; }
-
 span.addItemBigPlus, a.add_another { display: block; float: left; width: 16px; height: 16px; background-image: url('/assets/images/site/PI_Diagon_Icons.png'); background-position: -126px -233px; margin-right: 8px; }
 a.add_another { float: right; }
+/*END: icons */
 
-/*END: icons */	
+/*BEGIN Preview */
+.preview .player_link { display: block; float: left; width: 32px; height: 32px; background-image: url('/assets/images/site/cursors.png'); margin-right: 10px;}
+.preview .player_link.play { background-position: 0 -128px; }
+.preview .player_link.pause { background-position: 0 -160px; }
+.preview .player_link.reload { background-position: 0 -96px; }
+/*END: Preview*/

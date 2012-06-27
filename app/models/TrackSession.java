@@ -1,18 +1,17 @@
 package models;
 
 import java.util.Date;
-import java.util.List;
 
 import com.mongodb.BasicDBObject;
 
 import play.modules.mongodb.jackson.MongoDB;
 import net.vz.mongodb.jackson.DBQuery;
-import net.vz.mongodb.jackson.DBRef;
 import net.vz.mongodb.jackson.Id;
 import net.vz.mongodb.jackson.JacksonDBCollection;
 import net.vz.mongodb.jackson.MongoCollection;
 import net.vz.mongodb.jackson.ObjectId;
 import net.vz.mongodb.jackson.WriteResult;
+import nl.bitwalker.useragentutils.UserAgent;
 
 @MongoCollection(name = "track_session")
 public class TrackSession {
@@ -24,12 +23,17 @@ public class TrackSession {
 		@Id
 		public String _id;
 		public Date startedAt;
+		public Date firstActionAt;
 		public Date lastActionAt;
 		public String userAgent;
 		public String ip;
 		public String country;
 		public String language;
 		public String host;
+		//Extracted for possible analytical functions
+		public String browser;
+		public String os;
+		public String mainLanguage;
 		
 		@ObjectId
 		public String userId;
@@ -42,6 +46,30 @@ public class TrackSession {
 	
 	public static int getLocationsCount( Model ob ) {
 		return RecordedLocation.coll.find(DBQuery.is("sessionId",  new org.bson.types.ObjectId( ob._id ) )).count();
+	}
+	
+	public static Long getDurationSeconds(Model ob) {
+		return ( ( ob.lastActionAt.getTime() - ( ob.firstActionAt == null ? ob.startedAt.getTime() : ob.firstActionAt.getTime() ) ) / 1000 );
+	}
+	public static String getDuration(Model ob) {
+		Long seconds = getDurationSeconds(ob);
+		Long min = seconds / 60;
+		Long leftSeconds = seconds % 60 ;
+		return min+":"+leftSeconds;
+	}
+	
+	public static String getBrowser(Model ob) {
+		UserAgent userAgent = UserAgent.parseUserAgentString( ob.userAgent );
+		return userAgent.getBrowser().getName();
+	}
+	public static String getLanguage(Model ob) {
+		String[] languages = ob.language.split(",");
+		if( languages.length > 1 ) return languages[0];
+		return ob.language;
+	}
+	public static String getOS(Model ob) {
+		UserAgent userAgent = UserAgent.parseUserAgentString( ob.userAgent );
+		return userAgent.getOperatingSystem().getName();
 	}
 	
 }

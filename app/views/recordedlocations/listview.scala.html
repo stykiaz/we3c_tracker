@@ -5,7 +5,8 @@
 		<td>@row.startedAt</td>
 		<td>@row.lastActionAt</td>
 		<td>@row.location</td>
-		<td ><a href="@routes.Preview.view( row._id )" target="_blank" >View</a></td>
+		<td>@models.RecordedLocation.getDuration( row )</td>
+		<td><a href="@routes.Preview.view( row._id )" target="_blank" >View</a></td>
 	</tr>
 	
 }
@@ -33,6 +34,7 @@
 									<th>Started At</th>
 									<td>Last Action At</td>
 									<td>Location</td>
+									<td>Duration</td>
 									<td>&nbsp;</td>
 								</tr>
 							</thead>

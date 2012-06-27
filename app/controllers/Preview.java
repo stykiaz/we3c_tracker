@@ -16,6 +16,7 @@ import net.vz.mongodb.jackson.DBQuery;
 
 import com.mongodb.BasicDBObject;
 import models.RecordedLocation;
+import models.TrackSession;
 import models.TrackedAction;
 import static play.libs.Json.toJson;
 import play.Play;
@@ -27,15 +28,17 @@ public class Preview extends Controller {
 
 	public static Result view(String locId) {
 		RecordedLocation.Model location;
-		TrackedAction.Model firstAction; 
+		TrackedAction.Model firstAction;
+		TrackSession.Model sess;
 		try {
 			location = RecordedLocation.coll.findOneById(locId);
+			sess = TrackSession.coll.findOneById( location.sessionId );
 			firstAction = TrackedAction.coll.find( DBQuery.is("recLocId", new ObjectId( location._id ) ) ).limit(1).sort( new BasicDBObject("ts", 1) ).next();
 		} catch( Exception e) {
 			return badRequest();
 		}
 		
-		return ok( view.render( location, firstAction ) );
+		return ok( view.render( sess, location, firstAction ) );
 	}
 	
 	public static Result getData( String locId ) {

@@ -1,4 +1,4 @@
-@(location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model)
+@(sess: models.TrackSession.Model, location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model)
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -21,11 +21,17 @@
 
 </head>
 <body>
-	<p>
+	<p class="preview">
 		<span style="font-weight: bold;">Url:</span> <a href="@location.location" target="_blank">@location.location</a>
 		<span style="font-weight: bold;">Started At:</span> @location.startedAt 
+		<span style="font-weight: bold;">Language:</span> <span>@models.TrackSession.getLanguage(sess)</span>  
+		<span style="font-weight: bold;">Browser:</span> <span>@models.TrackSession.getBrowser(sess)</span>  
+		<span style="font-weight: bold;">OS:</span> <span>@models.TrackSession.getOS(sess)</span>
+		<br/>
+		<a href="#" class="player_link play_pause play"></a>  
+		<a href="#" class="player_link reload"></a>  
 		<span style="font-weight: bold;">Duration:</span> @models.RecordedLocation.getDuration(location)  
-		<span style="font-weight: bold;">Current Playback:</span> <span id="current_playback">0</span>  
+		<span style="font-weight: bold;">Current Playback:</span> <span id="current_playback">0</span>
 	</p>
 	<iframe id="playback" style="border: 1px solid black; width: @(firstAction.w)px; height: @(firstAction.h)px; " src="@routes.Preview.proxy(location._id)" ></iframe>
 
@@ -34,6 +40,5 @@
 		var viewLocationId = '@location._id';
 	</script>
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/preview.js")"></script>
-
 </body>
 </html>

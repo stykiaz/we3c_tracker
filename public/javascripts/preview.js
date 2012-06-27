@@ -27,11 +27,35 @@ $('#playback').load(function(){
 			this.cursorElement = $('#we3ctracker_cursor', this.theBody);
 			var that = this;
 			this.loadData();
+			
+			$('.player_link.play_pause').click(function(){
+				if( $(this).hasClass('play') ) {
+					$('.play_pause').removeClass('play').addClass('pause');
+					we3cPlayback.playBack();
+				} else if( $(this).hasClass('pause') ) {
+					$('.play_pause').removeClass('pause').addClass('play');
+					clearTimeout(we3cPlayback.playBackTimer);
+					we3cPlayback.playBackTimer = null;
+				}
+			})
+			$('.player_link.reload').click(function(){
+				clearTimeout(we3cPlayback.playBackTimer);
+				we3cPlayback.playBackTimer = null;
+				we3cPlayback.currentTimeDuration = 0;
+				we3cPlayback.data = null;
+				we3cPlayback.cursorElement.css('top', "0px");
+				we3cPlayback.cursorElement.css('left', "0px");
+				we3cPlayback.theContentWindow.scrollTo( 0, 0 );
+				we3cPlayback.loadData();
+			})
+			
 		}
 		this.loadData = function() {
 			var that = this;
 			$.getJSON( jsRoutes.controllers.Preview.getData( this.locationId ).url, function(data){
 				that.data = data;
+				$('#current_playback').text('0');
+				$('.play_pause').removeClass('play').addClass('pause');
 				that.playBack();
 			} )
 		}
