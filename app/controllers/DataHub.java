@@ -76,13 +76,13 @@ public class DataHub extends Controller {
 			trackSess.host = req.get().host;
 			trackSess.userId = user._id;
 			trackSess._id =  TrackSession.save(trackSess).getSavedId();
-			session().put("tracked_session", trackSess._id);
+			session().put(req.get().host+"_tracked_session", trackSess._id);
 			//TODO: get client IP using http proxy
 		}
 		
 		RecordedLocation.Model loc = null;
-		if( session().containsKey("last_tracked_location") ) {
-			loc =  RecordedLocation.coll.findOneById( session().get("last_tracked_location") );
+		if( session().containsKey(req.get().host+"_last_tracked_location") ) {
+			loc =  RecordedLocation.coll.findOneById( session().get(req.get().host+"_last_tracked_location") );
 		}
 		
 		String actionsString = new String( Base64.decode( req.get().d ) );
@@ -114,7 +114,7 @@ public class DataHub extends Controller {
 						if( trackSess.firstActionAt == null ) { 
 							trackSess.firstActionAt = new Date( action.ts ); TrackSession.save(trackSess);
 						}
-						session().put("last_tracked_location", loc._id);
+						session().put(req.get().host+"_last_tracked_location", loc._id);
 						break;
 					case 1: //mouse down
 						if( parts.length != 6 ) continue;
