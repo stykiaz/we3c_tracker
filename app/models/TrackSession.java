@@ -44,13 +44,20 @@ public class TrackSession {
 		return tmp;
 	}
 	
-	public static int getLocationsCount( Model ob ) {
-		return RecordedLocation.coll.find(DBQuery.is("sessionId",  new org.bson.types.ObjectId( ob._id ) )).count();
+	public static net.vz.mongodb.jackson.DBCursor<RecordedLocation.Model> getLocations( Model ob ) {
+		return RecordedLocation.coll.find( DBQuery.is("sessionId", new org.bson.types.ObjectId( ob._id )) ).sort( new BasicDBObject("lastActionAt", -1) );
 	}
 	
+	public static int getLocationsCount( Model ob ) {
+		return RecordedLocation.coll.find(DBQuery.is("sessionId",  new org.bson.types.ObjectId( ob._id ) )).size();
+	}
+
+	//wrong way of doing it, silly me ...
+	@Deprecated
 	public static Long getDurationSeconds(Model ob) {
 		return ( ( ob.lastActionAt.getTime() - ( ob.firstActionAt == null ? ob.startedAt.getTime() : ob.firstActionAt.getTime() ) ) / 1000 );
 	}
+	@Deprecated
 	public static String getDuration(Model ob) {
 		Long seconds = getDurationSeconds(ob);
 		Long min = seconds / 60;

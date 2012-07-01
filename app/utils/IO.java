@@ -63,7 +63,7 @@ public class IO {
 		return result;
 	}
 	
-	public static void writeToRemoteFiler(File file, String path, String name) throws Exception {
+	/*public static void writeToRemoteFiler(File file, String path, String name) throws Exception {
 		HttpClient httpclient;
 		httpclient = new DefaultHttpClient();
 		if( AppConfig.isDev() ) {
@@ -111,7 +111,7 @@ public class IO {
         } finally {
             try { httpclient.getConnectionManager().shutdown(); } catch (Exception ignore) {}
         }
-	}
+	}*/
 	
 	/**
 	 * Read file content to a String

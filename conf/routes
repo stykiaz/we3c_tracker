@@ -39,6 +39,9 @@ GET		/preview-tracked-location/$locId<[0-9a-zA-Z]+>		controllers.Preview.view(lo
 GET		/location-proxy/$locId<[0-9a-zA-Z]+>				controllers.Preview.proxy(locId: String)
 GET		/preview/get-data/$locId<[0-9a-zA-Z]+>				controllers.Preview.getData(locId: String)
 
+#heatmaps
+GET		/heatmaps/mouse-positions/$locId<[0-9a-zA-Z]+>		controllers.Heatmaps.mousePositions(locId: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)
 GET		/tracker-code/v1/js						controllers.Assets.at(path="/public", file="javascripts/tracker.js")

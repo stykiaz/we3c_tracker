@@ -19,7 +19,9 @@ import play.Play;
 import play.data.Form;
 import play.data.validation.Constraints.Required;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Http.Context;
+import play.mvc.Http.Cookie;
 import play.mvc.Result;
 import utils.Base64;
 import utils.Tools;
@@ -57,7 +59,12 @@ public class DataHub extends Controller {
 			return forbidden( outGifStream );
 		}
 		
-		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session") ) {
+		Long systemTs = new Date().getTime(); 
+		
+		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") )
+		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") &&
+			( systemTs < Integer.parseInt( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
+			session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session") ) {
 			trackSess = TrackSession.coll.findOneById( session().get( Tools.md5Encode( req.get().host )+"_tracked_session") );
 		} else {
 			trackSess = new TrackSession.Model();
@@ -173,6 +180,8 @@ public class DataHub extends Controller {
 			TrackSession.save( trackSess );
 		}
 		RecordedLocation.save( loc );
+		
+		session().put(Tools.md5Encode( req.get().host )+"_tracked_session_ts", ( systemTs + 3600000 )+"");
 		
 		response().setContentType( "image/png" );
 		return ok( outGifStream );

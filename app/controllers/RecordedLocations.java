@@ -39,10 +39,10 @@ public class RecordedLocations extends Controller {
 			adminQuery.is("sessionId", new ObjectId( params.sessId ) );
 		}
 		net.vz.mongodb.jackson.DBCursor<RecordedLocation.Model> admins = models.RecordedLocation.coll.find( adminQuery )
-															  .limit( params.resultsPerPage ).skip( params.resultsPerPage * params.p - params.resultsPerPage )
+															  .skip( params.resultsPerPage * params.p - params.resultsPerPage ).limit( params.resultsPerPage )
 															  .sort( new BasicDBObject("lastActionAt", -1) );
 		
-		params.setTotalResults( models.TrackSession.coll.find( adminQuery ).count() );
+		params.setTotalResults( models.RecordedLocation.coll.find( adminQuery ).count() );
 		
 		return ok( listview.render( params , admins ) );
 	}

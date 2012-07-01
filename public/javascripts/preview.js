@@ -1,4 +1,5 @@
 var we3cPlayback = null;
+
 $('#playback').load(function(){
 	var document = $('#playback').contents();
 
@@ -23,6 +24,7 @@ $('#playback').load(function(){
 		'           background-image: url(\'/assets/images/site/cursors.png\'); background-position: 0 -64px;"></div>';
 		this.cursorElement = null
 		this.initCode = function() {
+			$('a', this.theBody).click(function(){ return false; })
 			this.theBody.append( this.cursorCodeCode );
 			this.cursorElement = $('#we3ctracker_cursor', this.theBody);
 			var that = this;
@@ -117,4 +119,8 @@ $('#playback').load(function(){
 	we3cPlayback = new playbackCursor( viewLocationId );
 	we3cPlayback.initCode();
 	
+})
+
+$('#locations').change(function(){
+	document.location = jsRoutes.controllers.Preview.view( $(this).val() ).url;
 })

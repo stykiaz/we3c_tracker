@@ -6,11 +6,10 @@ public class AppConfig {
 
 	public static String uploadDirectory;
 	public static String uploadDirectoryCache;
+	public static String temporaryFilesDirectory;
 	public static String appRootDirectory;
 	public static String domain;
 	
-	public static double latitudeDelta = 0.6;
-	public static double longitudeDelta = 0.7;
 	
 	public static String mail_smtpPassword; 
 	public static String mail_smtpUsername; 
@@ -21,12 +20,8 @@ public class AppConfig {
 	public static String developerEmail = "stan@wethreecreatives.com";
 	public static String supportEmail = "stan@wethreecreatives.com";
 	
-	public static String pathToPdfGenerator;
+	public static String pathToHtmlToImageGenerator;
 
-	public static String remoteFilerService;
-	
-	public static String syDomain;
-	
 	public static String googleAnalyticsCode;
 	
 	public static boolean isProd() {
@@ -43,15 +38,14 @@ public class AppConfig {
 		appRootDirectory = Play.application().path().getAbsolutePath()+"/";//"/www/sites/superyachts.com/v2/dev-properties/";
 		uploadDirectory = "/media/ext3/www/htdocs/work/we3c/uploads/";
 		uploadDirectoryCache = "/media/ext3/www/htdocs/work/we3c/uploads/cache/";
-		pathToPdfGenerator = "/www/sites/superyachts.com/pdfgenerator/wkhtmltopdf";
+		temporaryFilesDirectory = "/media/ext3/www/htdocs/work/we3c/tracker_tmp/";
+		pathToHtmlToImageGenerator = "/media/ext3/www/htdocs/work/we3c/wkhtmltoimage-i386";
 		domain = "localhost:9001";
 		
 		mail_smtpUsername = "stan@wethreecreatives.com";
 		mail_smtpPassword = "alfanero3";
 		mail_smtpHost = "smtpout.europe.secureserver.net";
 		mail_smtpPort = "465";
-		
-		remoteFilerService = "localhost:9002";
 		
 		googleAnalyticsCode = "";
 		
@@ -60,15 +54,15 @@ public class AppConfig {
 		appRootDirectory = Play.application().path().getAbsolutePath()+"/";//"/www/sites/superyachts.com/v2/dev-properties/";
 		uploadDirectory = "/media/ext3/www/htdocs/work/we3c/uploads/";
 		uploadDirectoryCache = "/media/ext3/www/htdocs/work/we3c/uploads/cache/";
-		pathToPdfGenerator = "/www/sites/superyachts.com/pdfgenerator/wkhtmltopdf";
-		domain = "localhost:9001";
+		temporaryFilesDirectory = "/media/ext3/www/htdocs/work/we3c/tracker_tmp/";
+		
+		pathToHtmlToImageGenerator = "/media/ext3/www/htdocs/work/we3c/wkhtmltoimage-i386";
+		domain = "clickheat.wethreecreatives.com";
 		
 		mail_smtpUsername = "stan@wethreecreatives.com";
 		mail_smtpPassword = "alfanero3";
 		mail_smtpHost = "smtpout.europe.secureserver.net";
 		mail_smtpPort = "465";
-		
-		remoteFilerService = "localhost:9002";
 		
 		googleAnalyticsCode = "";
 		
@@ -77,15 +71,14 @@ public class AppConfig {
 		appRootDirectory = Play.application().path().getAbsolutePath()+"/";//"/www/sites/superyachts.com/v2/dev-properties/";
 		uploadDirectory = "/media/ext3/www/htdocs/work/we3c/uploads/";
 		uploadDirectoryCache = "/media/ext3/www/htdocs/work/we3c/uploads/cache/";
-		pathToPdfGenerator = "/www/sites/superyachts.com/pdfgenerator/wkhtmltopdf";
-		domain = "localhost:9001";
+		temporaryFilesDirectory = "/media/ext3/www/htdocs/work/we3c/tracker_tmp/";
+		pathToHtmlToImageGenerator = "/media/ext3/www/htdocs/work/we3c/wkhtmltoimage-i386";
+		domain = "clickheat.wethreecreatives.com";
 		
 		mail_smtpUsername = "stan@wethreecreatives.com";
 		mail_smtpPassword = "alfanero3";
 		mail_smtpHost = "smtpout.europe.secureserver.net";
 		mail_smtpPort = "465";
-		
-		remoteFilerService = "localhost:9002";
 		
 		googleAnalyticsCode = "";
 	}

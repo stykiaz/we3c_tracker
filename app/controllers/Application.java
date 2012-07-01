@@ -85,7 +85,8 @@ public class Application extends Controller {
 	      return ok(
 	          Routes.javascriptRouter("jsRoutes",
 	              // Routes for Properties
-	              controllers.routes.javascript.Preview.getData()
+	              controllers.routes.javascript.Preview.getData(),
+	              controllers.routes.javascript.Preview.view()
 	          )
 	      );
 	  }

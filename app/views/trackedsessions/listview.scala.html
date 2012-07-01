@@ -7,7 +7,6 @@
 		<td><a title="@row.userAgent">@models.TrackSession.getOS(row) @models.TrackSession.getBrowser(row)</a></td>
 		<td>@models.TrackSession.getLanguage(row)</td>
 		<td>@row.host</td>
-		<td>@models.TrackSession.getDuration( row )</td>
 		<td ><a href="@routes.RecordedLocations.index()?sessId=@row._id" class="" rel="" >View Pages (@models.TrackSession.getLocationsCount( row ))</a></td>
 	</tr>
 	
@@ -27,7 +26,7 @@
 				
 				<div class="block_content">
 				
-					<form action="" method="post">
+					
 					
 						<table cellpadding="0" cellspacing="0" width="100%" class="sortable">
 						
@@ -38,7 +37,6 @@
 									<td>User Agent</td>
 									<td>Language</td>
 									<td>Host</td>
-									<td>Duration</td>
 									<td>&nbsp;</td>
 								</tr>
 							</thead>
@@ -49,17 +47,17 @@
 								}
 							</tbody>
 						</table>
-						
+						@params.getTotalPages()
 						@if( params.getTotalPages() > 1 ) {
 							<div class="pagination right">
 								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
-								@for( cnt <- 1 to params.getTotalPages() ) {
+								@for( cnt <- 1 to params.getNextSetOfPages() ) {
 									<a href="@(controllers.routes.TrackedSessions.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
 								}
 								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }
 							</div>		<!-- .pagination ends -->
 						}
-					</form>
+					
 					
 				</div>		<!-- .block_content ends -->
 				

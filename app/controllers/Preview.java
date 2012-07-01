@@ -38,7 +38,7 @@ public class Preview extends Controller {
 			return badRequest();
 		}
 		
-		return ok( view.render( sess, location, firstAction ) );
+		return ok( view.render( sess, location, firstAction, TrackSession.getLocations( sess ) ) );
 	}
 	
 	public static Result getData( String locId ) {

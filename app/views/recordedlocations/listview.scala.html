@@ -6,7 +6,10 @@
 		<td>@row.lastActionAt</td>
 		<td>@row.location</td>
 		<td>@models.RecordedLocation.getDuration( row )</td>
-		<td><a href="@routes.Preview.view( row._id )" target="_blank" >View</a></td>
+		<td>
+			<a href="@routes.Preview.view( row._id )" target="_blank" >Replay</a>
+			<a href="@routes.Heatmaps.mousePositions( row._id )" target="_blank" >Heatmap</a>
+		</td>
 	</tr>
 	
 }
@@ -41,7 +44,6 @@
 							
 							<tbody>
 								@for( ind <- 1 to data.size() ) {
-									
 									@resultRow(data.next())
 								}
 							</tbody>
@@ -50,7 +52,7 @@
 						@if( params.getTotalPages() > 1 ) {
 							<div class="pagination right">
 								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
-								@for( cnt <- 1 to params.getTotalPages() ) {
+								@for( cnt <- 1 to params.getNextSetOfPages() ) {
 									<a href="@(controllers.routes.TrackedSessions.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
 								}
 								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }

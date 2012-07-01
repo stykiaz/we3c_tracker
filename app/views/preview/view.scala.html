@@ -1,5 +1,8 @@
-@(sess: models.TrackSession.Model, location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model)
+@(sess: models.TrackSession.Model, location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model, sessLocations: net.vz.mongodb.jackson.DBCursor[models.RecordedLocation.Model] )
 <!DOCTYPE html>
+@locationRow( row : models.RecordedLocation.Model ) = {
+	<option value="@row._id" @if( row._id.equals( location._id ) ){selected="selected"}>@row.location</option>
+}
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -32,6 +35,12 @@
 		<a href="#" class="player_link reload"></a>  
 		<span style="font-weight: bold;">Duration:</span> @models.RecordedLocation.getDuration(location)  
 		<span style="font-weight: bold;">Current Playback:</span> <span id="current_playback">0</span>
+		<a href="" style="font-weight: bold;">Heatmap</a> <br/>
+		<span style="font-weight: bold;">Locations:</span> <select id="locations">
+															@for( ind <- 1 to sessLocations.size() ) {
+																@locationRow(sessLocations.next())
+															}
+														   </select>
 	</p>
 	<iframe id="playback" style="border: 1px solid black; width: @(firstAction.w)px; height: @(firstAction.h)px; " src="@routes.Preview.proxy(location._id)" ></iframe>
 
@@ -39,6 +48,7 @@
 	<script type="text/javascript">
 		var viewLocationId = '@location._id';
 	</script>
+	<script type="text/javascript" src="@routes.Application.javascriptRoutes()"></script>
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/preview.js")"></script>
 </body>
 </html>
