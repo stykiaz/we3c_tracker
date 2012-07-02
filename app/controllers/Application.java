@@ -86,7 +86,10 @@ public class Application extends Controller {
 	          Routes.javascriptRouter("jsRoutes",
 	              // Routes for Properties
 	              controllers.routes.javascript.Preview.getData(),
-	              controllers.routes.javascript.Preview.view()
+	              controllers.routes.javascript.Preview.view(),
+	              controllers.routes.javascript.Heatmaps.mouseFollowHeat(),
+	              controllers.routes.javascript.Heatmaps.siteFoldHeat(),
+	              controllers.routes.javascript.Heatmaps.clickHeat()
 	          )
 	      );
 	  }

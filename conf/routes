@@ -40,7 +40,10 @@ GET		/location-proxy/$locId<[0-9a-zA-Z]+>				controllers.Preview.proxy(locId: St
 GET		/preview/get-data/$locId<[0-9a-zA-Z]+>				controllers.Preview.getData(locId: String)
 
 #heatmaps
-GET		/heatmaps/mouse-positions/$locId<[0-9a-zA-Z]+>		controllers.Heatmaps.mousePositions(locId: String)
+GET		/heatmaps/filter/$locId<[0-9a-zA-Z]+>				controllers.Heatmaps.filter(locId: String)
+GET		/heatmaps/mouse-clicks/$locId<[0-9a-zA-Z]+>			controllers.Heatmaps.clickHeat(locId: String)
+GET		/heatmaps/mouse-follow/$locId<[0-9a-zA-Z]+>			controllers.Heatmaps.mouseFollowHeat(locId: String)
+GET		/heatmaps/site-fold/$locId<[0-9a-zA-Z]+>			controllers.Heatmaps.siteFoldHeat(locId: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

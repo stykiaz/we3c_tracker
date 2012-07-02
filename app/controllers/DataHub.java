@@ -53,7 +53,7 @@ public class DataHub extends Controller {
 			e.printStackTrace();
 			return internalServerError("No User");
 		}
-		if( user == null ) return badRequest( outGifStream );
+		if( user == null || user._id == null || user._id.isEmpty() ) return badRequest( outGifStream );
 		
 		if( !User.isDomainTrackable( req.get().host, user ) ) {
 			return forbidden( outGifStream );

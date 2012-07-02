@@ -770,7 +770,8 @@ a:hover {
 
 .block form .note.error { color: #e3302c; }
 			
-.block form input.submit {
+.block form a.submit { display: block; float: left; text-align: center; }
+.block form .submit {
 	width: 85px;
 	height: 30px;
 	line-height: 30px;
@@ -785,14 +786,14 @@ a:hover {
 	cursor: pointer;
 	margin-right: 10px;
 	vertical-align: middle;
-	}
+}
 	
-.block form input.submit:hover {
+.block form .submit:hover {
 	background: url(/assets/images/admin/btns_.gif) top center no-repeat;
 	text-shadow: 1px 1px 0 #b55f10;
 	}
 
-.block form input.submit.tiny {
+.block form .submit.tiny {
 	width: 105px;
 	height: 20px;
 	line-height: 20px;
@@ -805,13 +806,13 @@ a:hover {
 	background: url(/assets/images/admin/tiny.gif) top center no-repeat;
 	}
 	
-.block form input.submit.tiny:hover { background: url(/assets/images/admin/tiny_.gif) top center no-repeat; }
+.block form .submit.tiny:hover { background: url(/assets/images/admin/tiny_.gif) top center no-repeat; }
 	
-.block form input.submit.mid { width: 115px; background: url(/assets/images/admin/btnm.gif) top center no-repeat; }
-.block form input.submit.mid:hover { background: url(/assets/images/admin/btnm_.gif) top center no-repeat; }
+.block form .submit.mid { width: 115px; background: url(/assets/images/admin/btnm.gif) top center no-repeat; }
+.block form .submit.mid:hover { background: url(/assets/images/admin/btnm_.gif) top center no-repeat; }
 
-.block form input.submit.long { width: 165px; background: url(/assets/images/admin/btnb.gif) top center no-repeat; }
-.block form input.submit.long:hover { background: url(/assets/images/admin/btnb_.gif) top center no-repeat; }
+.block form .submit.long { width: 165px; background: url(/assets/images/admin/btnb.gif) top center no-repeat; }
+.block form .submit.long:hover { background: url(/assets/images/admin/btnb_.gif) top center no-repeat; }
 
 
 /* Small blocks */

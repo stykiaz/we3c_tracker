@@ -1,0 +1,65 @@
+@(location: models.RecordedLocation.Model, sess: models.TrackSession.Model, user: models.User.Model )
+
+@views.html.layout {
+		<div class="block">
+			
+				<div class="block_head">
+					<div class="bheadl"></div>
+					<div class="bheadr"></div>
+					
+					<h2>Heatmaps</h2>
+					
+				</div>		<!-- .block_head ends -->
+				
+				
+				
+				<div class="block_content">
+					
+					<p class="breadcrumb"><a href="@controllers.routes.Application.home()">Dashboard</a> &raquo; <a href="@controllers.routes.TrackedSessions.index()?userId=@user._id">@user.username</a>
+									&raquo; <a href="@routes.RecordedLocations.index()?sessId=@sess._id">Session</a> 
+									&raquo; <strong>Heatmaps For @location.location </strong></p>
+					<form>
+						<p>
+							
+							<label>Domain:</label> @sess.host
+							
+						</p>
+						<p>
+							
+							<label>Url:</label> @location.location
+							
+						</p>
+								
+						<hr />
+						
+						<p>
+							<a class="submit long" target="_blank" id="goto_clickheat" >Click Heat</a>
+							<a class="submit long" target="_blank" id="goto_mousehover">MouseFollow</a>
+							<a class="submit long" target="_blank" id="goto_fold" >Fold</a>
+						</p>
+					</form>
+					
+					
+				</div>		<!-- .block_content ends -->
+				
+				<div class="bendl"></div>
+				<div class="bendr"></div>
+					
+			</div>		<!-- .block ends -->
+			
+			<script>
+				$('#goto_clickheat').click(function(){
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.clickHeat( '@location._id' ).url);
+					return true;
+				})
+				$('#goto_mousehover').click(function(){
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.mouseFollowHeat( '@location._id' ).url);
+					return true;
+				})
+				$('#goto_fold').click(function(){
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.siteFoldHeat( '@location._id' ).url);
+					return true;
+				})
+			</script>
+			
+}

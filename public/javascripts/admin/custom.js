@@ -73,47 +73,6 @@ $(function () {
 	// Block search
 	$('.block .block_head form .text').bind('click', function() { $(this).attr('value', ''); });
 	
-	// Image actions menu
-	$('ul.imglist li').hover(
-		function() { $(this).find('ul').css('display', 'none').fadeIn('fast').css('display', 'block'); },
-		function() { $(this).find('ul').fadeOut(100); }
-	);
-		
-	// Image delete confirmation
-	$('ul.imglist .delete a').click(function() {
-		if (confirm("Are you sure you want to delete this image?")) {
-			var url = $(this).attr('rel');
-			var id = $(this).attr('name');
-			$.ajax({
-				data: {id: id},
-				dataType: 'json',
-				type: 'POST',
-				url: url,
-				success: function(data){
-					$('li#image_'+data.id).remove();
-				}
-			})
-			return false;
-		} else {
-			return false;
-		}
-	});
-	// Image delete confirmation
-	$('ul.imglist .preferred a').click(function() {
-		var url = $(this).attr('rel');
-		var id = $(this).attr('name');
-		$.ajax({
-			data: {id: id},
-			dataType: 'json',
-			type: 'POST',
-			url: url,
-			success: function(data){
-				$('ul.imglist li').removeClass('main');
-				$('li#image_'+data.id).addClass("main");
-			}
-		})
-		return false;
-	});
 	
 	/******
 	 * BEGIN: Common triggers,acction,events

@@ -5,6 +5,7 @@
 package utils;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -12,7 +13,11 @@ import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Line2D.Double;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +77,8 @@ public class HeatMap {
     /** name of file to save heatmap to. */
     private String outputFile;
 
+    private List<Line2D.Double> lines;
+    
     /**
      * constructs new instance of HeatMap from given list of points.
      * Depending on the amount of points, this may take a while,
@@ -85,6 +92,16 @@ public class HeatMap {
         outputFile = output;
         this.lvlMap = lvlMap;
         initMap(points);
+    }
+    
+    public HeatMap(String output, String lvlMap) {
+    	outputFile = output;
+    	this.lvlMap = lvlMap;
+    	
+    	map = new HashMap<Integer, List<Point>>();
+        BufferedImage mapPic = loadImage(lvlMap);
+        maxXValue = mapPic.getWidth();
+        maxYValue = mapPic.getHeight();
     }
 
     /**
@@ -174,6 +191,109 @@ public class HeatMap {
 //        saveImage(heatMap, outputFile);
         saveImage(output, outputFile);
         print("done creating heatmap.");
+    }
+    
+    /**
+     * creates the heatmap.
+     *
+     * @param multiplier calculated opacity of every point will be
+     * multiplied by this value. This leads to a HeatMap that is easier to read,
+     * especially when there are not too many points or the points are too
+     * spread out. Pass 1.0f for original.
+     */
+    public void createFoldHeatMap(float multiplier) {
+    	
+    	BufferedImage circle = loadImage(CIRCLEPIC);
+    	BufferedImage heatMap = new BufferedImage(maxXValue, maxYValue, 6);
+    	paintInColor(heatMap, Color.white);
+    	
+    	Iterator<List<Point>> iterator = map.values().iterator();
+    	while (iterator.hasNext()) {
+    		List<Point> currentPoints = iterator.next();
+    		
+    		// calculate opaqueness
+    		// based on number of occurences of current point
+    		float opaque = currentPoints.size() / (float) maxOccurance;
+    		// adjust opacity so the heatmap is easier to read
+    		opaque = opaque * multiplier;
+    		if (opaque > 1) {
+    			opaque = 1;
+    		}
+    		Point currentPoint = currentPoints.get(0);
+    		
+    		System.out.println( currentPoints.size() + " / " + opaque + " / " + currentPoint.y);
+    		
+    		// draw a circle which gets transparent from middle to outside
+    		// (which opaqueness is set to "opaque")
+    		// at the position specified by the center of the currentPoint
+    		addRectangleHeatSpot(heatMap, opaque, multiplier, currentPoint.y);
+//            addImage(heatMap, circle, opaque, (currentPoint.x - HALFCIRCLEPICSIZE), (currentPoint.y - HALFCIRCLEPICSIZE));
+    	}
+    	print("done adding points.");
+    	
+    	// negate the image
+    	heatMap = negateImage(heatMap);
+    	
+    	// remap black/white with color spectrum from white over red, orange,
+    	// yellow, green to blue
+    	remap(heatMap);
+    	
+    	// blend image over lvlMap at opacity 40%
+    	BufferedImage output = loadImage(lvlMap);
+    	addImage(output, heatMap, 0.4f);
+    	
+    	// save image
+//        saveImage(heatMap, outputFile);
+    	saveImage(output, outputFile);
+    	print("done creating heatmap.");
+    }
+    
+    /**
+     * creates the heatmap based on paths.
+     *
+     * @param multiplier calculated opacity of every point will be
+     * multiplied by this value. This leads to a HeatMap that is easier to read,
+     * especially when there are not too many points or the points are too
+     * spread out. Pass 1.0f for original.
+     */
+    public void createLinesHeatMap(float opaque, List<GeneralPath> paths) {
+    	
+    	BufferedImage circle = loadImage(CIRCLEPIC);
+    	BufferedImage heatMap = new BufferedImage(maxXValue, maxYValue, 6);
+    	paintInColor(heatMap, Color.white);
+    	
+    	
+    	Iterator<GeneralPath> iterator = paths.iterator();
+    	while (iterator.hasNext()) {
+    		
+    		// adjust opacity so the heatmap is easier to read
+//    		opaque = opaque * multiplier;
+//    		if (opaque > 1) {
+//    			opaque = 1;
+//    		}
+//    		System.out.println(opaque);
+    		// draw a circle which gets transparent from middle to outside
+    		// (which opaqueness is set to "opaque")
+    		// at the position specified by the center of the currentPoint
+    		addHeatLine(heatMap, opaque, iterator.next());
+    	}
+    	print("done adding paths.");
+    	
+    	// negate the image
+    	heatMap = negateImage(heatMap);
+    	
+    	// remap black/white with color spectrum from white over red, orange,
+    	// yellow, green to blue
+    	remap(heatMap);
+    	
+    	// blend image over lvlMap at opacity 40%
+    	BufferedImage output = loadImage(lvlMap);
+    	addImage(output, heatMap, 0.4f);
+    	
+    	// save image
+//        saveImage(heatMap, outputFile);
+    	saveImage(output, outputFile);
+    	print("done creating heatmap.");
     }
 
     /**
@@ -281,27 +401,54 @@ public class HeatMap {
         addImage(buff1, buff2, opaque, 0, 0);
     }
 
+    private void addHeatLine(BufferedImage buff1, float opaque, GeneralPath path) {
+    	Short color = (short) (255 * opaque);
+    	float radius = 32;
+        Color c1 = new Color(255, 255, 255, color);
+        Color c2 = new Color(0, 0, 0, color);
+        
+        GradientPaint paint = new GradientPaint(0, 0, c2, 0, 0, c2);
+        BasicStroke stroke = new BasicStroke(radius, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ); 
+    	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
+        g2d.setPaint(paint);
+        g2d.setStroke( stroke );
+        
+        g2d.draw( path );
+        g2d.dispose();
+    }
+    
     private void addHeatSpot(BufferedImage buff1, float opaque, float multiplier, int x, int y) {
     	Short color = (short) (255 * opaque);
-    	Color centerColour = new Color(color);
-    	Color edgeColour = new Color( 0 );
     	float radius = 32;
-    	Point2D center = new Point2D.Float(radius, radius);
-        Color c1 = new Color(0,80,180,255);
-        Color c2 = new Color(0,0,0,100);
-        RadialGradientPaint paint = new RadialGradientPaint(radius/2,radius/2,radius/2,new float[]{0f,0.3f,1f},new Color[]{c1,c1,c2});
+        Color c1 = new Color(255, 255, 255, color);
+        Color c2 = new Color(0, 0, 0, color);
+        RadialGradientPaint paint = new RadialGradientPaint(radius, radius, radius, new float[]{0f, 1f},new Color[]{c1, c2});
         Ellipse2D.Double ellips = new Ellipse2D.Double(x, y, radius, radius);
-        
         
     	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
-//        g2d.drawImage(buff2, x, y, null);
-//        g2d.drawOval(x, y, (int)radius, (int)radius);
         g2d.setPaint(paint);
-//        g2d.draw(ellips);
         g2d.fill( ellips );
         g2d.dispose();
+    }
+    
+    private void addRectangleHeatSpot(BufferedImage buff1, float opaque, float multiplier, int y) {
+    	Short color = (short) (255 * opaque);
+    	float radius = 32;
+    	Color c1 = new Color(255, 255, 255, color);
+    	Color c2 = new Color(0, 0, 0, color);
+    	RadialGradientPaint paint = new RadialGradientPaint(radius, radius, radius, new float[]{0f, 1f},new Color[]{c1, c2});
+    	Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, maxXValue, y);
+    	
+    	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
+    	g2d.setPaint(paint);
+    	g2d.fill( rect );
+    	g2d.dispose();
     }
     
     /**
