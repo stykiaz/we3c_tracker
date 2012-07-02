@@ -287,8 +287,6 @@ public class HeatMap {
     	Color edgeColour = new Color( 0 );
     	float radius = 32;
     	Point2D center = new Point2D.Float(radius, radius);
-    	float[] dist = { .2f, .8f };
-        Color[] colors = { Color.WHITE, Color.BLACK };
         Color c1 = new Color(0,80,180,255);
         Color c2 = new Color(0,0,0,100);
         RadialGradientPaint paint = new RadialGradientPaint(radius/2,radius/2,radius/2,new float[]{0f,0.3f,1f},new Color[]{c1,c1,c2});
