@@ -12,12 +12,16 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Line2D.Double;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +31,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+
+import com.jhlabs.image.GaussianFilter;
+
+import controllers.routes.javascript;
 
 import setups.AppConfig;
 
@@ -62,7 +70,8 @@ public class HeatMap {
     /** half of the size of the circle picture. */
     private static final int HALFCIRCLEPICSIZE = 32;
     /** path to picture of circle which gets more transparent to the outside. */
-    private static final String CIRCLEPIC = AppConfig.appRootDirectory + "public/images/heatmap/bolillaT.png"; //System.getProperty("user.dir") + File.separator + "heatmap" + File.separator + "bolillaT.png";
+    private static final String CIRCLEPIC = AppConfig.appRootDirectory + "public/images/heatmap/circle_v2.png"; //System.getProperty("user.dir") + File.separator + "heatmap" + File.separator + "bolillaT.png";
+    private static final String PATHPIC = AppConfig.appRootDirectory + "public/images/heatmap/path.png"; //System.getProperty("user.dir") + File.separator + "heatmap" + File.separator + "bolillaT.png";
     private static final String SPECTRUMPIC = AppConfig.appRootDirectory + "public/images/heatmap/colors.png"; //System.getProperty("user.dir")  + "/heatmap/colors.png";
     /** map to collect and sort points. */
     private Map<Integer, List<Point>> map;
@@ -77,6 +86,8 @@ public class HeatMap {
     /** name of file to save heatmap to. */
     private String outputFile;
 
+    private int linesRadius = 16;
+    
     private List<Line2D.Double> lines;
     
     /**
@@ -171,8 +182,7 @@ public class HeatMap {
             // draw a circle which gets transparent from middle to outside
             // (which opaqueness is set to "opaque")
             // at the position specified by the center of the currentPoint
-            addHeatSpot(heatMap, opaque, multiplier, currentPoint.x, currentPoint.y);
-//            addImage(heatMap, circle, opaque, (currentPoint.x - HALFCIRCLEPICSIZE), (currentPoint.y - HALFCIRCLEPICSIZE));
+            addImage(heatMap, circle, opaque, (currentPoint.x - HALFCIRCLEPICSIZE), (currentPoint.y - HALFCIRCLEPICSIZE));
         }
         print("done adding points.");
 
@@ -183,6 +193,9 @@ public class HeatMap {
         // yellow, green to blue
         remap(heatMap);
 
+        com.jhlabs.image.GaussianFilter filter = new GaussianFilter( (float) (linesRadius * 0.4) );
+    	filter.filter(heatMap, heatMap);
+        
         // blend image over lvlMap at opacity 40%
         BufferedImage output = loadImage(lvlMap);
         addImage(output, heatMap, 0.4f);
@@ -203,7 +216,7 @@ public class HeatMap {
      */
     public void createFoldHeatMap(float multiplier) {
     	
-    	BufferedImage circle = loadImage(CIRCLEPIC);
+//    	BufferedImage circle = loadImage(CIRCLEPIC);
     	BufferedImage heatMap = new BufferedImage(maxXValue, maxYValue, 6);
     	paintInColor(heatMap, Color.white);
     	
@@ -221,13 +234,10 @@ public class HeatMap {
     		}
     		Point currentPoint = currentPoints.get(0);
     		
-    		System.out.println( currentPoints.size() + " / " + opaque + " / " + currentPoint.y);
-    		
     		// draw a circle which gets transparent from middle to outside
     		// (which opaqueness is set to "opaque")
     		// at the position specified by the center of the currentPoint
     		addRectangleHeatSpot(heatMap, opaque, multiplier, currentPoint.y);
-//            addImage(heatMap, circle, opaque, (currentPoint.x - HALFCIRCLEPICSIZE), (currentPoint.y - HALFCIRCLEPICSIZE));
     	}
     	print("done adding points.");
     	
@@ -237,6 +247,9 @@ public class HeatMap {
     	// remap black/white with color spectrum from white over red, orange,
     	// yellow, green to blue
     	remap(heatMap);
+    	
+    	com.jhlabs.image.GaussianFilter filter = new GaussianFilter( (float) (linesRadius * 0.4) );
+     	filter.filter(heatMap, heatMap);
     	
     	// blend image over lvlMap at opacity 40%
     	BufferedImage output = loadImage(lvlMap);
@@ -258,7 +271,7 @@ public class HeatMap {
      */
     public void createLinesHeatMap(float opaque, List<GeneralPath> paths) {
     	
-    	BufferedImage circle = loadImage(CIRCLEPIC);
+    	BufferedImage pathPic = loadImage(PATHPIC);
     	BufferedImage heatMap = new BufferedImage(maxXValue, maxYValue, 6);
     	paintInColor(heatMap, Color.white);
     	
@@ -266,16 +279,11 @@ public class HeatMap {
     	Iterator<GeneralPath> iterator = paths.iterator();
     	while (iterator.hasNext()) {
     		
-    		// adjust opacity so the heatmap is easier to read
-//    		opaque = opaque * multiplier;
-//    		if (opaque > 1) {
-//    			opaque = 1;
-//    		}
 //    		System.out.println(opaque);
     		// draw a circle which gets transparent from middle to outside
     		// (which opaqueness is set to "opaque")
     		// at the position specified by the center of the currentPoint
-    		addHeatLine(heatMap, opaque, iterator.next());
+    		addHeatLine(heatMap, pathPic, opaque, iterator.next());
     	}
     	print("done adding paths.");
     	
@@ -285,6 +293,9 @@ public class HeatMap {
     	// remap black/white with color spectrum from white over red, orange,
     	// yellow, green to blue
     	remap(heatMap);
+    	
+    	com.jhlabs.image.GaussianFilter filter = new GaussianFilter( (float) (linesRadius * 0.8) );
+    	filter.filter(heatMap, heatMap);
     	
     	// blend image over lvlMap at opacity 40%
     	BufferedImage output = loadImage(lvlMap);
@@ -401,17 +412,87 @@ public class HeatMap {
         addImage(buff1, buff2, opaque, 0, 0);
     }
 
-    private void addHeatLine(BufferedImage buff1, float opaque, GeneralPath path) {
+    /**
+     * draws the path on the canvas. uses light transparent colour
+     * @param buff1
+     * @param texture
+     * @param opaque
+     * @param path
+     */
+    private void addHeatLine(BufferedImage buff1, BufferedImage texture, float opaque, GeneralPath path) {
     	Short color = (short) (255 * opaque);
-    	float radius = 32;
+    	float radius = linesRadius;
         Color c1 = new Color(255, 255, 255, color);
         Color c2 = new Color(0, 0, 0, color);
         
-        GradientPaint paint = new GradientPaint(0, 0, c2, 0, 0, c2);
-        BasicStroke stroke = new BasicStroke(radius, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ); 
+//        GradientPaint paint = new GradientPaint(radius / 2, radius / 2, c2, 0, 0, c2, true);
+        
+        BasicStroke stroke = new BasicStroke(radius * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND );
+        
     	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
+    	
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
+    	
+//        g2d.setPaint(paint);
+    	g2d.setColor( c2 );
+        g2d.setStroke( stroke );
+        g2d.draw( path );
+        g2d.dispose();
+    }
+    /**
+     * calculates the direction of the line and draws each line accordingly. Sadly the result wasn't great for some reason ...
+     * @param buff1
+     * @param texture
+     * @param opaque
+     * @param path
+     */
+    private void addHeatLine(BufferedImage buff1, BufferedImage texture, float opaque, Line2D.Double path) {
+    	
+    	Short color = (short) (255 * opaque);
+    	float radius = 16;
+        Color c1 = new Color(255, 255, 255, color);
+        Color c2 = new Color(0, 0, 0, color);
+        
+        java.lang.Double b = Math.abs( path.y2 - path.y1 );
+        double a = Math.abs( path.x2 - path.x1 );
+        double degreeB, degreeA;
+        double c = ( Math.sqrt( Math.pow( a , 2) +  Math.pow( b , 2) ) );
+//        System.out.println("c: " + c);
+        double sinB = b / c ;
+        double sinA = a / c ;
+//        System.out.println( Math.sqrt( Math.pow( a , 2) +  Math.pow( b , 2) ) );
+//        System.out.println( path.y2 + " / " + path.y1 + " / " + path.x2 + " / " + path.x1 + " /b: " + b + " /a: " + a + " /SubB: " + sinB);
+        degreeB = Math.asin( sinB ) * 180 / Math.PI ;
+        degreeA = 90 - degreeB;
+//        System.out.println( "degA: " + degreeA + "degB: " + degreeB );
+        double diffb = radius;
+        double diffc = radius / ( sinB );
+        double diffa = diffc * ( sinA );
+//        System.out.println( "diffb: " + diffb  + " diffa: " + diffa + " diffc: " + diffc + " / y2: " + path.y2 + " /y1: " + path.y1 + " /x2: " + path.x2 + " /x1: " + path.x1+ " /SinB: " + sinB);
+        
+        double internalX = 0, internalY = 0;
+        double coef = diffb / diffa;
+//        if( diffa <= 32 ) {
+        	if( path.x2 > path.x1 ) { 
+        		if( path.y2 > path.y1 ) internalX = radius + coef * radius;
+        		else internalX = radius - coef * radius;
+        	} else {
+        		if( path.y2 > path.y1 ) internalX = radius - coef * radius;
+        		else internalX = radius + coef * radius;
+        	}
+
+//        System.out.println("InternalX: "+internalX+" , InternalY: " + internalY);
+        GradientPaint paint = new GradientPaint(radius, radius, c2, (float)internalX, (float)internalY, c1, true);
+        
+        BasicStroke stroke = new BasicStroke(radius * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND );
+        
+    	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
+    	
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
+    	
+//        g2d.setPaint(textPaint);
         g2d.setPaint(paint);
         g2d.setStroke( stroke );
         
@@ -419,35 +500,29 @@ public class HeatMap {
         g2d.dispose();
     }
     
-    private void addHeatSpot(BufferedImage buff1, float opaque, float multiplier, int x, int y) {
-    	Short color = (short) (255 * opaque);
-    	float radius = 32;
-        Color c1 = new Color(255, 255, 255, color);
-        Color c2 = new Color(0, 0, 0, color);
-        RadialGradientPaint paint = new RadialGradientPaint(radius, radius, radius, new float[]{0f, 1f},new Color[]{c1, c2});
-        Ellipse2D.Double ellips = new Ellipse2D.Double(x, y, radius, radius);
-        
-    	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
-    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
-        g2d.setPaint(paint);
-        g2d.fill( ellips );
-        g2d.dispose();
-    }
-    
+   
     private void addRectangleHeatSpot(BufferedImage buff1, float opaque, float multiplier, int y) {
     	Short color = (short) (255 * opaque);
+    	System.out.println( color + " Y: " + y );
     	float radius = 32;
-    	Color c1 = new Color(255, 255, 255, color);
-    	Color c2 = new Color(0, 0, 0, color);
-    	RadialGradientPaint paint = new RadialGradientPaint(radius, radius, radius, new float[]{0f, 1f},new Color[]{c1, c2});
+    	Color c1 = new Color(0, 0, 0, color);
+    	Color c2 = new Color(255, 255, 255, color);
+//    	GradientPaint paint = new GradientPaint(radius, radius, c1, radius, 0, c2, true);
+//    	GradientPaint paint = new GradientPaint(0, 0, c1, 0, y, c2);
+    	
+    	BasicStroke stroke = new BasicStroke(radius * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND );
+    	
     	Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, maxXValue, y);
+    	Line2D.Double line = new Line2D.Double(0, y, maxXValue, y);
     	
     	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
-    	g2d.setPaint(paint);
+    	g2d.setColor( c1 );
+//    	g2d.setPaint(paint);
+//    	g2d.setStroke( stroke );
     	g2d.fill( rect );
+//    	g2d.draw( line );
     	g2d.dispose();
     }
     

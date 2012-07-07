@@ -27,7 +27,10 @@
 						<p>
 							
 							<label>Url:</label> @location.location
-							
+						</p>
+						<p>							
+							<label>Multiplier <small>If there is not enough data this helps make heatmap more saturated. Value between 1-100</small>:</label> <br/> 
+							<input type="text" id="multiplier" class="text medium"/>
 						</p>
 								
 						<hr />
@@ -49,15 +52,15 @@
 			
 			<script>
 				$('#goto_clickheat').click(function(){
-					$(this).attr('href', jsRoutes.controllers.Heatmaps.clickHeat( '@location._id' ).url);
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.clickHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ));
 					return true;
 				})
 				$('#goto_mousehover').click(function(){
-					$(this).attr('href', jsRoutes.controllers.Heatmaps.mouseFollowHeat( '@location._id' ).url);
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.mouseFollowHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ));
 					return true;
 				})
 				$('#goto_fold').click(function(){
-					$(this).attr('href', jsRoutes.controllers.Heatmaps.siteFoldHeat( '@location._id' ).url);
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.siteFoldHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ));
 					return true;
 				})
 			</script>
