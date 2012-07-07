@@ -7,6 +7,7 @@ package utils;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -195,11 +196,22 @@ public class HeatMap {
 
         com.jhlabs.image.GaussianFilter filter = new GaussianFilter( (float) (linesRadius * 0.4) );
     	filter.filter(heatMap, heatMap);
+    	
+    	
         
         // blend image over lvlMap at opacity 40%
         BufferedImage output = loadImage(lvlMap);
         addImage(output, heatMap, 0.4f);
+        
+        addImage(output, loadImage(SPECTRUMPIC), 0.6f, 10, 30);
 
+        Graphics2D g2 = output.createGraphics();
+    	g2.setColor( new Color(0, 0, 0, (short)(255 * 0.4) ) );
+    	g2.setFont(new Font( "Times", Font.BOLD, 24 ));
+    	g2.drawString("0", 65, 30);
+    	g2.drawString(""+maxOccurance, 65, 530);
+    	g2.dispose();
+        
         // save image
 //        saveImage(heatMap, outputFile);
         saveImage(output, outputFile);
@@ -224,20 +236,21 @@ public class HeatMap {
     	while (iterator.hasNext()) {
     		List<Point> currentPoints = iterator.next();
     		
-    		// calculate opaqueness
-    		// based on number of occurences of current point
-    		float opaque = currentPoints.size() / (float) maxOccurance;
-    		// adjust opacity so the heatmap is easier to read
-    		opaque = opaque * multiplier;
-    		if (opaque > 1) {
-    			opaque = 1;
-    		}
+//    		// calculate opaqueness
+//    		// based on number of occurences of current point
+//    		float opaque = currentPoints.size() / (float) maxOccurance;
+//    		// adjust opacity so the heatmap is easier to read
+//    		opaque = opaque * multiplier;
+//    		if (opaque > 1) {
+//    			opaque = 1;
+//    		}
     		Point currentPoint = currentPoints.get(0);
     		
     		// draw a circle which gets transparent from middle to outside
     		// (which opaqueness is set to "opaque")
     		// at the position specified by the center of the currentPoint
-    		addRectangleHeatSpot(heatMap, opaque, multiplier, currentPoint.y);
+//    		System.out.println( multiplier );
+    		addRectangleHeatSpot(heatMap, multiplier, currentPoint.y);
     	}
     	print("done adding points.");
     	
@@ -501,9 +514,9 @@ public class HeatMap {
     }
     
    
-    private void addRectangleHeatSpot(BufferedImage buff1, float opaque, float multiplier, int y) {
+    private void addRectangleHeatSpot(BufferedImage buff1, float opaque, int y) {
     	Short color = (short) (255 * opaque);
-    	System.out.println( color + " Y: " + y );
+//    	System.out.println( color + " Y: " + y );
     	float radius = 32;
     	Color c1 = new Color(0, 0, 0, color);
     	Color c2 = new Color(255, 255, 255, color);

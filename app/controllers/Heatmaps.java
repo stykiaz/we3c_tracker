@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -164,17 +165,32 @@ public class Heatmaps extends Controller {
 		} else pageMap =  "/media/ext3/www/htdocs/work/we3c/tracker_tmp/2823850d-af7e-40e8-a5f7-9bdb6ca525d4.jpg";
 		
 		List<Point> points = new ArrayList<Point>();
-		//TODO: create aggregate query ( GROUP BY ) and think wheather this will change the results
-		action = TrackedAction.coll.find( DBQuery.exists("h").in("recLocId", locationsCollection ).is("e", 1) )
-											.sort( new BasicDBObject("h", -1) );
-		while(action.hasNext()) {
-			TrackedAction.Model curract = action.next();
-			points.add( new Point(0, curract.h) );
+		Iterator< ObjectId > locationsIterator = locationsCollection.iterator();
+		Point tmpPoint = null;
+		while( locationsIterator.hasNext() ) {
+			ObjectId locId1 = locationsIterator.next();
+			action = TrackedAction.coll.find( DBQuery.exists("h").is("recLocId", locId1 ).is("e", 2) )
+													.sort( new BasicDBObject("h", -1) ).limit(1);
+			int h = 0, t = 0;
+			if( action.size() > 0 ) h = action.next().h; 
+			action = TrackedAction.coll.find( DBQuery.exists("t").is("recLocId", locId1 ).is("e", 4) )
+												.sort( new BasicDBObject("t", -1) ).limit(1);
+			if( action.size() > 0 ) t = action.next().t;
+			tmpPoint = new Point(0, h + t);
+			if( !points.contains( tmpPoint ) ) points.add( tmpPoint );
 		}
+		//TODO: create aggregate query ( GROUP BY ) and think wheather this will change the results
+//		action = TrackedAction.coll.find( DBQuery.exists("h").in("recLocId", locationsCollection ).is("e", 1) )
+//											.sort( new BasicDBObject("h", -1) );
+//		while(action.hasNext()) {
+//			TrackedAction.Model curract = action.next();
+//			points.add( new Point(0, curract.h) );
+//		}
 		String heatMapOutput = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".png";
 		HeatMap hmap = new HeatMap(points, heatMapOutput, pageMap);
 
-		hmap.createFoldHeatMap(0.0F + heatRequest.get().multiplier / 10 );
+//		hmap.createFoldHeatMap( (float)heatRequest.get().multiplier / 100f );
+		hmap.createFoldHeatMap( 0.25f );
 		
 		System.out.println( "Points: " + points.size() );
 		System.out.println( "Maxwidth: " + maxWidth );
@@ -202,7 +218,7 @@ public class Heatmaps extends Controller {
 		}
 		
 		String pageMap;
-		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/a2a73404-da87-4450-840a-d2b5442ffd0f.jpg").exists() ) {
+		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/9498de47-fa45-4019-aa77-e9a3fcac49c3.jpg").exists() ) {
 			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
 			//Execute custom JS to create the required overlay
 			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
@@ -217,7 +233,7 @@ public class Heatmaps extends Controller {
 				e.printStackTrace();
 				return internalServerError();
 			}
-		} else pageMap =  "/media/ext3/www/htdocs/work/we3c/tracker_tmp/a2a73404-da87-4450-840a-d2b5442ffd0f.jpg";
+		} else pageMap =  "/media/ext3/www/htdocs/work/we3c/tracker_tmp/9498de47-fa45-4019-aa77-e9a3fcac49c3.jpg";
 		
 		List<Point> points = new ArrayList<Point>();
 
