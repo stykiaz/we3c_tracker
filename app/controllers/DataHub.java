@@ -63,7 +63,7 @@ public class DataHub extends Controller {
 		
 //		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") )
 		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") &&
-			( systemTs < Integer.parseInt( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
+			( systemTs < Long.valueOf( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
 			session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session") ) {
 			trackSess = TrackSession.coll.findOneById( session().get( Tools.md5Encode( req.get().host )+"_tracked_session") );
 		} else {
