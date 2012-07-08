@@ -248,6 +248,7 @@ public class Heatmaps extends Controller {
 		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
+		response().setContentType( "image/png" );
 		return ok( new File( heatMapOutput ) );
 	}
 	
