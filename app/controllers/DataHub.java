@@ -94,9 +94,10 @@ public class DataHub extends Controller {
 		}
 		
 		String actionsString = new String( Base64.decode( req.get().d ) );
+
+		if( actionsString.length() < 5 ) badRequest(outGifStream);
 		
 		String[] actions = actionsString.split("}");
-		if( actions.length < 2 ) badRequest(outGifStream);
 		Long lastTs = 0L;
 		for(int i = 0; i < actions.length; i++) {
 			String[] parts = actions[i].split("[|]");
