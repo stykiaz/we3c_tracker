@@ -37,7 +37,6 @@ we3cTracker.prototype.trackEvent = function(e){
 			var tmp = _we3ctr.getWindowsSize();
 			state['w'] = tmp['w'];
 			state['h'] = tmp['h'];
-			console.log( state['x'], state['y'] );
 			_we3ctr.eventsRepo.push(state);
 			break;
 		case 'mousemove':
