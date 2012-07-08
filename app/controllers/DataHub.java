@@ -61,7 +61,7 @@ public class DataHub extends Controller {
 		
 		Long systemTs = new Date().getTime(); 
 		
-		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") )
+//		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") )
 		if( session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") &&
 			( systemTs < Integer.parseInt( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
 			session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session") ) {
