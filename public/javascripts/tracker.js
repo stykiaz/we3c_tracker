@@ -32,18 +32,19 @@ we3cTracker.prototype.trackEvent = function(e){
 			if( _we3ctr.eventsRepo.length >= 1 && _we3ctr.eventsRepo[ _we3ctr.eventsRepo.length - 1 ]['e'] == state['e'] && state['ts'] - _we3ctr.eventsRepo[ _we3ctr.eventsRepo.length - 1 ]['ts'] < 1000 ) {
 				return;
 			}
-			state['x'] = e.clientX;
-			state['y'] = e.clientY;
+			state['x'] = e.clientX + _we3ctr.getScrollLeft();
+			state['y'] = e.clientY + _we3ctr.getScrollTop();
 			var tmp = _we3ctr.getWindowsSize();
 			state['w'] = tmp['w'];
 			state['h'] = tmp['h'];
+			console.log( state['x'], state['y'] );
 			_we3ctr.eventsRepo.push(state);
 			break;
 		case 'mousemove':
 			//track mouse move only if direction has changed!
 			state['e'] = _we3ctr.eventTypesList[e.type];
-			state['x'] = e.clientX;
-			state['y'] = e.clientY;
+			state['x'] = e.clientX + _we3ctr.getScrollLeft();
+			state['y'] = e.clientY + _we3ctr.getScrollTop();
 			var tmp = _we3ctr.getWindowsSize();
 			state['w'] = tmp['w'];
 			state['h'] = tmp['h'];
@@ -127,9 +128,6 @@ we3cTracker.prototype.submitSessionStorage = function() {
 	sessionStorage._we3cTrackerStoredState = null;
 }
 we3cTracker.prototype.periodicOffload = function() {
-//	console.log( this.eventsRepo.length );
-//	console.log( this.eventsRepo[ this.eventsRepo.length - 1 ].ts );
-//	console.log( new Date().getTime() - this.eventsRepo[ this.eventsRepo.length - 1 ].ts );
 	if( this.eventsRepo.length > 0 &&  ( new Date().getTime() - this.eventsRepo[ this.eventsRepo.length - 1 ].ts ) > 10000 ) {
 		this.offloadData();
 	}

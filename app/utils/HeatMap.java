@@ -12,6 +12,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RadialGradientPaint;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
@@ -76,6 +77,7 @@ public class HeatMap {
     private static final String SPECTRUMPIC = AppConfig.appRootDirectory + "public/images/heatmap/colors.png"; //System.getProperty("user.dir")  + "/heatmap/colors.png";
     /** map to collect and sort points. */
     private Map<Integer, List<Point>> map;
+    private Map<Integer, List<Rectangle>> mapRects;
     /** maximum occurance of the same coordinates. */
     private int maxOccurance = 1;
     /** maximal given x value. */
@@ -150,6 +152,28 @@ public class HeatMap {
         }
     }
 
+    public void buildData( List<Rectangle> rectangles ) {
+    	mapRects = new HashMap<Integer, List<Rectangle>>();
+    	int rectsSize = rectangles.size();
+    	for (int i = 0; i < rectsSize; i++) {
+    		Rectangle rect = rectangles.get( i );
+    		int hash = getkey(rect);
+    		if (mapRects.containsKey(hash)) {
+    			List<Rectangle> thisList = mapRects.get(hash);
+                thisList.add(rect);
+                if (thisList.size() > maxOccurance) {
+                    maxOccurance = thisList.size();
+                }
+    		} else {
+    			List<Rectangle> newList = new LinkedList<Rectangle>();
+                newList.add(rect);
+                mapRects.put(hash, newList);
+    		}
+    	}
+    	
+    	return;
+    }
+    
     /**
      * creates the heatmap.
      *
@@ -168,8 +192,7 @@ public class HeatMap {
         while (iterator.hasNext()) {
             List<Point> currentPoints = iterator.next();
 
-            // calculate opaqueness
-            // based on number of occurences of current point
+            // calculate opaqueness based on number of occurences of current point
             float opaque = currentPoints.size() / (float) maxOccurance;
 
             // adjust opacity so the heatmap is easier to read
@@ -180,9 +203,8 @@ public class HeatMap {
 
             Point currentPoint = currentPoints.get(0);
 
-            // draw a circle which gets transparent from middle to outside
-            // (which opaqueness is set to "opaque")
-            // at the position specified by the center of the currentPoint
+            // draw a circle which gets transparent from middle to outside 
+            //(which opaqueness is set to "opaque") at the position specified by the center of the currentPoint
             addImage(heatMap, circle, opaque, (currentPoint.x - HALFCIRCLEPICSIZE), (currentPoint.y - HALFCIRCLEPICSIZE));
         }
         print("done adding points.");
@@ -190,21 +212,19 @@ public class HeatMap {
         // negate the image
         heatMap = negateImage(heatMap);
 
-        // remap black/white with color spectrum from white over red, orange,
-        // yellow, green to blue
+        // remap black/white with color spectrum from white over red, orange, yellow, green to blue
         remap(heatMap);
 
+        //Smooth some edges
         com.jhlabs.image.GaussianFilter filter = new GaussianFilter( (float) (linesRadius * 0.4) );
     	filter.filter(heatMap, heatMap);
     	
-    	
-        
         // blend image over lvlMap at opacity 40%
         BufferedImage output = loadImage(lvlMap);
         addImage(output, heatMap, 0.4f);
         
+        //Add Legend
         addImage(output, loadImage(SPECTRUMPIC), 0.6f, 10, 30);
-
         Graphics2D g2 = output.createGraphics();
     	g2.setColor( new Color(0, 0, 0, (short)(255 * 0.4) ) );
     	g2.setFont(new Font( "Times", Font.BOLD, 24 ));
@@ -213,7 +233,7 @@ public class HeatMap {
     	g2.dispose();
         
         // save image
-//        saveImage(heatMap, outputFile);
+//        saveImage(heatMap, outputFile); //output medium with just the heat
         saveImage(output, outputFile);
         print("done creating heatmap.");
     }
@@ -232,33 +252,33 @@ public class HeatMap {
     	BufferedImage heatMap = new BufferedImage(maxXValue, maxYValue, 6);
     	paintInColor(heatMap, Color.white);
     	
-    	Iterator<List<Point>> iterator = map.values().iterator();
+    	Iterator<List<Rectangle>> iterator = mapRects.values().iterator();
+    	String maxSize = "";
     	while (iterator.hasNext()) {
-    		List<Point> currentPoints = iterator.next();
+    		List<Rectangle> currentPoints = iterator.next();
     		
-//    		// calculate opaqueness
-//    		// based on number of occurences of current point
-//    		float opaque = currentPoints.size() / (float) maxOccurance;
-//    		// adjust opacity so the heatmap is easier to read
-//    		opaque = opaque * multiplier;
-//    		if (opaque > 1) {
-//    			opaque = 1;
-//    		}
-    		Point currentPoint = currentPoints.get(0);
+    		// calculate opaqueness based on number of occurences of current point
+    		float opaque = currentPoints.size() / (float) maxOccurance;
+    		// adjust opacity so the heatmap is easier to read
+    		opaque = opaque * multiplier;
+    		if (opaque > 1) {
+    			opaque = 1;
+    		}
+    		Rectangle currentPoint = currentPoints.get(0);
+    		if( currentPoints.size() >= (float) maxOccurance ) {
+    			maxSize = "W: " + currentPoint.width+" H:" + currentPoint.height;
+    		}
     		
     		// draw a circle which gets transparent from middle to outside
-    		// (which opaqueness is set to "opaque")
-    		// at the position specified by the center of the currentPoint
-//    		System.out.println( multiplier );
-    		addRectangleHeatSpot(heatMap, multiplier, currentPoint.y);
+    		// (which opaqueness is set to "opaque") at the position specified by the center of the currentPoint
+    		addRectangleHeatSpot(heatMap, opaque, currentPoint);
     	}
     	print("done adding points.");
     	
     	// negate the image
     	heatMap = negateImage(heatMap);
     	
-    	// remap black/white with color spectrum from white over red, orange,
-    	// yellow, green to blue
+    	// remap black/white with color spectrum from white over red, orange, yellow, green to blue
     	remap(heatMap);
     	
     	com.jhlabs.image.GaussianFilter filter = new GaussianFilter( (float) (linesRadius * 0.4) );
@@ -267,6 +287,15 @@ public class HeatMap {
     	// blend image over lvlMap at opacity 40%
     	BufferedImage output = loadImage(lvlMap);
     	addImage(output, heatMap, 0.4f);
+    	
+    	//Add Legend
+        addImage(output, loadImage(SPECTRUMPIC), 0.6f, 10, 30);
+        Graphics2D g2 = output.createGraphics();
+    	g2.setColor( new Color(0, 0, 0, (short)(255 * 0.4) ) );
+    	g2.setFont(new Font( "Times", Font.BOLD, 24 ));
+    	g2.drawString("0", 65, 30);
+    	g2.drawString(""+maxOccurance + "("+maxSize+")", 65, 530);
+    	g2.dispose();
     	
     	// save image
 //        saveImage(heatMap, outputFile);
@@ -514,28 +543,16 @@ public class HeatMap {
     }
     
    
-    private void addRectangleHeatSpot(BufferedImage buff1, float opaque, int y) {
+    private void addRectangleHeatSpot(BufferedImage buff1, float opaque, Rectangle y) {
     	Short color = (short) (255 * opaque);
-//    	System.out.println( color + " Y: " + y );
-    	float radius = 32;
     	Color c1 = new Color(0, 0, 0, color);
     	Color c2 = new Color(255, 255, 255, color);
-//    	GradientPaint paint = new GradientPaint(radius, radius, c1, radius, 0, c2, true);
-//    	GradientPaint paint = new GradientPaint(0, 0, c1, 0, y, c2);
-    	
-    	BasicStroke stroke = new BasicStroke(radius * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND );
-    	
-    	Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, maxXValue, y);
-    	Line2D.Double line = new Line2D.Double(0, y, maxXValue, y);
     	
     	Graphics2D g2d = (Graphics2D)buff1.getGraphics();// createGraphics();
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     	g2d.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
     	g2d.setColor( c1 );
-//    	g2d.setPaint(paint);
-//    	g2d.setStroke( stroke );
-    	g2d.fill( rect );
-//    	g2d.draw( line );
+    	g2d.fill( y );
     	g2d.dispose();
     }
     
@@ -594,6 +611,11 @@ public class HeatMap {
      */
     private int getkey(Point p) {
         return ((p.x << 19) | (p.y << 7));
+    }
+    private int getkey(Rectangle p) {
+    	int coordHash = ((int)p.x << 19) | ((int)p.y << 7);
+    	int sizeHash = ((int)p.width << 19) | ((int)p.height << 7);
+    	return (coordHash + sizeHash);
     }
 
     /**

@@ -35,7 +35,7 @@ public class AppConfig {
 	}
 	
 	public static void setupDevEnv() {
-		appRootDirectory = Play.application().path().getAbsolutePath()+"/";//"/www/sites/superyachts.com/v2/dev-properties/";
+		appRootDirectory = Play.application().path().getAbsolutePath()+"/";
 		uploadDirectory = "/media/ext3/www/htdocs/work/we3c/uploads/";
 		uploadDirectoryCache = "/media/ext3/www/htdocs/work/we3c/uploads/cache/";
 		temporaryFilesDirectory = "/media/ext3/www/htdocs/work/we3c/tracker_tmp/";
@@ -51,12 +51,12 @@ public class AppConfig {
 		
 	}
 	public static void setupTestEnv() {
-		appRootDirectory = Play.application().path().getAbsolutePath()+"/";//"/www/sites/superyachts.com/v2/dev-properties/";
-		uploadDirectory = "/media/ext3/www/htdocs/work/we3c/uploads/";
-		uploadDirectoryCache = "/media/ext3/www/htdocs/work/we3c/uploads/cache/";
-		temporaryFilesDirectory = "/media/ext3/www/htdocs/work/we3c/tracker_tmp/";
+		appRootDirectory = Play.application().path().getAbsolutePath()+"/";
+		uploadDirectory = "";
+		uploadDirectoryCache = "";
+		temporaryFilesDirectory = "/www/sites/we3c/tracker_files/";
 		
-		pathToHtmlToImageGenerator = "/media/ext3/www/htdocs/work/we3c/wkhtmltoimage-i386";
+		pathToHtmlToImageGenerator = "/www/sites/we3c/wkhtmltoimage-i386";
 		domain = "clickheat.wethreecreatives.com";
 		
 		mail_smtpUsername = "stan@wethreecreatives.com";
@@ -68,11 +68,11 @@ public class AppConfig {
 		
 	}
 	public static void setupProdEnv() {
-		appRootDirectory = Play.application().path().getAbsolutePath()+"/";//"/www/sites/superyachts.com/v2/dev-properties/";
-		uploadDirectory = "/media/ext3/www/htdocs/work/we3c/uploads/";
-		uploadDirectoryCache = "/media/ext3/www/htdocs/work/we3c/uploads/cache/";
-		temporaryFilesDirectory = "/media/ext3/www/htdocs/work/we3c/tracker_tmp/";
-		pathToHtmlToImageGenerator = "/media/ext3/www/htdocs/work/we3c/wkhtmltoimage-i386";
+		appRootDirectory = Play.application().path().getAbsolutePath()+"/";
+		uploadDirectory = "";
+		uploadDirectoryCache = "";
+		temporaryFilesDirectory = "/www/sites/we3c/tracker_files/";
+		pathToHtmlToImageGenerator = "/www/sites/we3c/wkhtmltoimage-i386";
 		domain = "clickheat.wethreecreatives.com";
 		
 		mail_smtpUsername = "stan@wethreecreatives.com";

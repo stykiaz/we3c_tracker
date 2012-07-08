@@ -51,11 +51,11 @@
 						
 						@if( params.getTotalPages() > 1 ) {
 							<div class="pagination right">
-								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
+								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.RecordedLocations.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
 								@for( cnt <- 1 to params.getNextSetOfPages() ) {
-									<a href="@(controllers.routes.TrackedSessions.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
+									<a href="@(controllers.routes.RecordedLocations.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
 								}
-								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }
+								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.RecordedLocations.index())?p=@(params.getTotalPages())">&raquo;</a> }
 							</div>		<!-- .pagination ends -->
 						}
 					</form>

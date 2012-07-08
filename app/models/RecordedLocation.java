@@ -37,6 +37,7 @@ public class RecordedLocation {
 	public static WriteResult<RecordedLocation.Model, String> save(Model ob) {
 		WriteResult<RecordedLocation.Model, String> tmp = coll.save(ob); 
 		coll.ensureIndex( new BasicDBObject("sessionId", 1) );
+		coll.ensureIndex( new BasicDBObject("location", 1) );
 		return tmp;
 	}
 	

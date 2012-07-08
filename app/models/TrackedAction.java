@@ -39,7 +39,8 @@ public class TrackedAction {
 	}
 	public static WriteResult<TrackedAction.Model, String> save(TrackedAction.Model ob) {
 		WriteResult<TrackedAction.Model, String> tmp = coll.save( ob );
-		coll.ensureIndex( new BasicDBObject("sessionId", 1).append("recLocId", 1) );
+		coll.ensureIndex( new BasicDBObject("sessionId", 1) );
+		coll.ensureIndex( new BasicDBObject("recLocId", 1) );
 		return tmp;
 	}
 	
