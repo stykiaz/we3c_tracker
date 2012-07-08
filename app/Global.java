@@ -64,7 +64,7 @@ public class Global extends GlobalSettings {
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress( AppConfig.mail_fromEmail ));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse( AppConfig.developerEmail ));
-				message.setSubject("Server error in Properties - " + ((play.api.PlayException.UsefulException)arg0).id());
+				message.setSubject("Server error in Tracker - " + ((play.api.PlayException.UsefulException)arg0).id());
 
 				String text = "mode: " + Play.application().configuration().getString("app.envirement") + "id: " + ((play.api.PlayException.UsefulException)arg0).id() + "\n title: " + ((play.api.PlayException.UsefulException)arg0).title() + "\n" + "descr: " + ((play.api.PlayException.UsefulException)arg0).description() + "\n " + "msg: " + arg0.getMessage() + "\nstack: " + errors;
 

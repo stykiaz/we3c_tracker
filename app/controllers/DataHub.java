@@ -125,6 +125,8 @@ public class DataHub extends Controller {
 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
 						break;
 					case 1: //mouse down
+						//TODO: inspect errors and cases here
+						if( loc == null ) return badRequest(outGifStream);
 						if( parts.length != 6 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 1;
@@ -135,6 +137,8 @@ public class DataHub extends Controller {
 						action.ts = Long.valueOf( parts[5] );
 						break;
 					case 2: //move
+						//TODO: inspect errors and cases here
+						if( loc == null ) return badRequest(outGifStream);
 						if( parts.length != 6 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 2;
@@ -145,6 +149,8 @@ public class DataHub extends Controller {
 						action.ts = Long.valueOf( parts[5] );
 						break;
 					case 3: //resize
+						//TODO: inspect errors and cases here
+						if( loc == null ) return badRequest(outGifStream);
 						if( parts.length != 4 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 3;
@@ -153,6 +159,8 @@ public class DataHub extends Controller {
 						action.ts = Long.valueOf( parts[3] );
 						break;
 					case 4: //scroll
+						//TODO: inspect errors and cases here
+						if( loc == null ) return badRequest(outGifStream);
 						if( parts.length != 5 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 4;
