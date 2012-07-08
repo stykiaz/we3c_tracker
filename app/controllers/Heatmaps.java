@@ -121,8 +121,8 @@ public class Heatmaps extends Controller {
 		hmap.createLinesHeatMap(0.0F + (float)heatRequest.get().multiplier / 100F, points);
 		
 		
-//		System.out.println( "Points: " + points.size() );
-//		System.out.println( "Maxwidth: " + maxWidth );
+		System.out.println( "Points: " + points.size() );
+		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
 		return ok( new File( heatMapOutput ) );
@@ -147,7 +147,6 @@ public class Heatmaps extends Controller {
 		//TODO: check for cached recent snapshot
 //		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/2823850d-af7e-40e8-a5f7-9bdb6ca525d4.jpg").exists() ) {
 			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
-			//Execute custom JS to create the required overlay
 			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
 			try {
 				System.out.println( command );
@@ -189,8 +188,8 @@ public class Heatmaps extends Controller {
 		hmap.buildData( points );
 		hmap.createFoldHeatMap( 0.0F + heatRequest.get().multiplier / 10f );
 		
-//		System.out.println( "Points: " + points.size() );
-//		System.out.println( "Maxwidth: " + maxWidth );
+		System.out.println( "Points: " + points.size() );
+		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
 		return ok( new File( heatMapOutput ) );
@@ -217,7 +216,6 @@ public class Heatmaps extends Controller {
 		String pageMap;
 //		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/9498de47-fa45-4019-aa77-e9a3fcac49c3.jpg").exists() ) {
 			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
-			//Execute custom JS to create the required overlay
 			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
 			try {
 				System.out.println( command );
@@ -246,8 +244,8 @@ public class Heatmaps extends Controller {
 
 		hmap.createHeatMap(0.0F + heatRequest.get().multiplier / 10 );
 		
-//		System.out.println( "Points: " + points.size() );
-//		System.out.println( "Maxwidth: " + maxWidth );
+		System.out.println( "Points: " + points.size() );
+		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
 		return ok( new File( heatMapOutput ) );
