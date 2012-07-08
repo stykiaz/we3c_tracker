@@ -139,6 +139,7 @@ we3cTracker.prototype.offloadData = function() {
 	this.submitData( this.base64Encode( stringified ) );
 }
 we3cTracker.prototype.submitData = function(repoString) {
+	if( repoString == null || repoString.length < 5 ) return;
 	var datIm = new Image(); 
 	datIm.src = this.eventServer+"?d="+repoString+"&host="+document.location.host+"&key="+this.accountApiKey;
 	
