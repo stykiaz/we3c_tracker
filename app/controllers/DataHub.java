@@ -41,10 +41,6 @@ public class DataHub extends Controller {
 	
 	public static Result track() {
 		
-		System.out.println( request().headers() );
-		
-//		request().cookies().
-		
 		response().setContentType( "image/png" );
 		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
 		SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
@@ -104,7 +100,6 @@ public class DataHub extends Controller {
 		}
 		
 //		request().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 ), "/" );
-		System.out.println( cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) ) +"; Path=/;" );
 		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) ) +"; Path=/;" );
 		
 		RecordedLocation.Model loc = null;
@@ -150,7 +145,6 @@ public class DataHub extends Controller {
 // 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
 //						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600), "/" );
 						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) )+ "; Path=/;" );
-						System.out.println( cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) )+ "; Path=/;" );
 						
 						break;
 					case 1: //mouse down
