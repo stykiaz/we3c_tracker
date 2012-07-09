@@ -3,8 +3,10 @@ package controllers;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import nl.bitwalker.useragentutils.UserAgent;
@@ -38,8 +40,14 @@ public class DataHub extends Controller {
 	}
 	
 	public static Result track() {
+		
+		System.out.println( request().headers() );
+		
+//		request().cookies().
+		
 		response().setContentType( "image/png" );
 		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
+		SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 		
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
 
@@ -70,7 +78,7 @@ public class DataHub extends Controller {
 			storedTrackedSessionId != null
 			) {
 // 			trackSess = TrackSession.coll.findOneById( session().get( Tools.md5Encode( req.get().host )+"_tracked_session") );
-			trackSess = TrackSession.coll.findOneById( session().get( storedTrackedSessionId.value() ) );
+			trackSess = TrackSession.coll.findOneById( storedTrackedSessionId.value() );
 		} 
 		if( trackSess == null ) {
 			trackSess = new TrackSession.Model();
@@ -95,7 +103,9 @@ public class DataHub extends Controller {
 			//TODO: get client IP using http proxy
 		}
 		
-		response().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 ) );
+//		request().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 ), "/" );
+		System.out.println( cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) ) +"; Path=/;" );
+		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) ) +"; Path=/;" );
 		
 		RecordedLocation.Model loc = null;
 		String cookiesLocationName = Tools.md5Encode( req.get().host )+"_last_loc"; //last tracked location
@@ -103,7 +113,7 @@ public class DataHub extends Controller {
 		
 		if( lastTrackedLocationId != null /* session().containsKey(Tools.md5Encode( req.get().host )+"_last_tracked_location") */ ) {
 // 			loc =  RecordedLocation.coll.findOneById( session().get(Tools.md5Encode( req.get().host )+"_last_tracked_location") );
-			loc =  RecordedLocation.coll.findOneById( session().get( lastTrackedLocationId.value() ) );
+			loc =  RecordedLocation.coll.findOneById( lastTrackedLocationId.value() );
 		}
 		
 		String actionsString = new String( Base64.decode( req.get().d ) );
@@ -138,7 +148,10 @@ public class DataHub extends Controller {
 							trackSess.firstActionAt = new Date( action.ts ); TrackSession.save(trackSess);
 						}
 // 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
-						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600) );
+//						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600), "/" );
+						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) )+ "; Path=/;" );
+						System.out.println( cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) )+ "; Path=/;" );
+						
 						break;
 					case 1: //mouse down
 						//TODO: inspect errors and cases here

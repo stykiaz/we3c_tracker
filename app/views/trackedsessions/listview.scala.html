@@ -1,4 +1,4 @@
-@(params: utils.BasicRequests.listingRequest, data: net.vz.mongodb.jackson.DBCursor[models.TrackSession.Model] )
+@(params: controllers.TrackedSessions.listingRequest, data: net.vz.mongodb.jackson.DBCursor[models.TrackSession.Model] )
 
 @resultRow( row : models.TrackSession.Model ) = {
 	<tr id="row_@row._id">
@@ -47,14 +47,13 @@
 								}
 							</tbody>
 						</table>
-						@params.getTotalPages()
 						@if( params.getTotalPages() > 1 ) {
 							<div class="pagination right">
 								@if( params.getCurrentPage() > 1 ) {<a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()-1)">&laquo;</a>}
 								@for( cnt <- 1 to params.getNextSetOfPages() ) {
 									<a href="@(controllers.routes.TrackedSessions.index())?p=@cnt" class="@if( cnt == params.getCurrentPage() ){active}">@cnt</a>
 								}
-								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.TrackedSessions.index())?p=@(params.getCurrentPage()+1)">&raquo;</a> }
+								@if( params.getCurrentPage() < params.getTotalPages() ) { <a href="@(controllers.routes.TrackedSessions.index())?@if( params.userId != null ){userId=@params.userId&}p=@(params.getCurrentPage()+1)">&raquo;</a> }
 							</div>		<!-- .pagination ends -->
 						}
 					
