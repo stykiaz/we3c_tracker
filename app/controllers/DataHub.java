@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 import nl.bitwalker.useragentutils.UserAgent;
 
@@ -44,6 +47,9 @@ public class DataHub extends Controller {
 		response().setContentType( "image/png" );
 		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
 		SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+		int timeOffset = TimeZone.getDefault().getOffset(new Date().getTime() );
+		java.util.Calendar cal = Calendar.getInstance(new SimpleTimeZone(0, "GMT"));
+		httpDateFormat.setCalendar(cal);
 		
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
 
@@ -99,8 +105,9 @@ public class DataHub extends Controller {
 			//TODO: get client IP using http proxy
 		}
 		
-//		request().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 ), "/" );
-		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) ) +"; Path=/;" );
+		response().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 + timeOffset / 1000), "/" );
+//		System.out.println( cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
+//		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
 		
 		RecordedLocation.Model loc = null;
 		String cookiesLocationName = Tools.md5Encode( req.get().host )+"_last_loc"; //last tracked location
@@ -143,8 +150,9 @@ public class DataHub extends Controller {
 							trackSess.firstActionAt = new Date( action.ts ); TrackSession.save(trackSess);
 						}
 // 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
-//						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600), "/" );
-						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 ) )+ "; Path=/;" );
+						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600 + timeOffset / 1000 ), "/" );
+//						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
+//						System.out.println( cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset) )+ "; Path=/" );
 						
 						break;
 					case 1: //mouse down
