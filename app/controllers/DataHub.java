@@ -61,7 +61,7 @@ public class DataHub extends Controller {
 		response().setContentType( "image/png" );
 		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
 		SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss zzz");
-		int timeOffset = TimeZone.getDefault().getOffset(new Date().getTime() ) + 7200000;
+		int timeOffset = TimeZone.getDefault().getOffset(new Date().getTime() ) + 7200000; 
 		java.util.Calendar cal = Calendar.getInstance(new SimpleTimeZone(0, "GMT"));
 		httpDateFormat.setCalendar(cal);
 		
