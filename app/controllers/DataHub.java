@@ -95,7 +95,7 @@ public class DataHub extends Controller {
 			//TODO: get client IP using http proxy
 		}
 		
-		response().setCookie(cookieSessionName, trackSess._id, systemTs / 1000 + 3600 );
+		response().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 ) );
 		
 		RecordedLocation.Model loc = null;
 		String cookiesLocationName = Tools.md5Encode( req.get().host )+"_last_loc"; //last tracked location
@@ -138,7 +138,7 @@ public class DataHub extends Controller {
 							trackSess.firstActionAt = new Date( action.ts ); TrackSession.save(trackSess);
 						}
 // 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
-						response().setCookie(cookiesLocationName, loc._id, systemTs / 1000 + 3600 );
+						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600) );
 						break;
 					case 1: //mouse down
 						//TODO: inspect errors and cases here
