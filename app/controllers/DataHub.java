@@ -87,6 +87,8 @@ public class DataHub extends Controller {
 		Long systemTs = new Date().getTime( ); 
 		
 		Http.Cookie storedTrackedSessionId = request().cookies().get( cookieSessionName );
+		StringBuilder toSetCookiesString = new StringBuilder();
+		toSetCookiesString.append("_we3ctr=1");
 		
 		if( /*session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") &&
 			( systemTs < Long.valueOf( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
@@ -121,7 +123,8 @@ public class DataHub extends Controller {
 		
 //		response().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 + timeOffset / 1000), "/" );
 //		System.out.println( cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
-		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
+		toSetCookiesString.append( "; "+cookieSessionName+"="+trackSess._id );
+//		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
 		
 		RecordedLocation.Model loc = null;
 		String cookiesLocationName = Tools.md5Encode( req.get().host )+"_last_loc"; //last tracked location
@@ -165,7 +168,8 @@ public class DataHub extends Controller {
 						}
 // 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
 //						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600 + timeOffset / 1000 ), "/" );
-						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
+//						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
+						toSetCookiesString.append( "; "+cookiesLocationName+"="+loc._id );
 //						System.out.println( cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset) )+ "; Path=/" );
 						
 						break;
@@ -237,7 +241,9 @@ public class DataHub extends Controller {
 		
 // 		session().put(Tools.md5Encode( req.get().host )+"_tracked_session_ts", ( systemTs + 3600000 )+"");
 		
-		
+		if( toSetCookiesString.length() > 1 ) {
+			response().setHeader("Set-Cookie", toSetCookiesString+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
+		}
 		return ok( outGifStream );
 		
 	}
