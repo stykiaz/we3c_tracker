@@ -88,7 +88,7 @@ public class DataHub extends Controller {
 		
 		Http.Cookie storedTrackedSessionId = request().cookies().get( cookieSessionName );
 		StringBuilder toSetCookiesString = new StringBuilder();
-		toSetCookiesString.append("_we3ctr=1");
+		toSetCookiesString.append("_we3ctr=1"+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/");
 		
 		if( /*session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") &&
 			( systemTs < Long.valueOf( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
@@ -123,7 +123,7 @@ public class DataHub extends Controller {
 		
 //		response().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 + timeOffset / 1000), "/" );
 //		System.out.println( cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
-		toSetCookiesString.append( "; "+cookieSessionName+"="+trackSess._id );
+		toSetCookiesString.append( "; "+cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
 //		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
 		
 		RecordedLocation.Model loc = null;
@@ -169,7 +169,7 @@ public class DataHub extends Controller {
 // 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
 //						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600 + timeOffset / 1000 ), "/" );
 //						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
-						toSetCookiesString.append( "; "+cookiesLocationName+"="+loc._id );
+						toSetCookiesString.append( "; "+cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
 //						System.out.println( cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset) )+ "; Path=/" );
 						
 						break;
