@@ -242,6 +242,7 @@ public class DataHub extends Controller {
 // 		session().put(Tools.md5Encode( req.get().host )+"_tracked_session_ts", ( systemTs + 3600000 )+"");
 		
 		if( toSetCookiesString.length() > 1 ) {
+			response().setHeader("p3p", "CP=\"CAO PSA OUR\"");
 			response().setHeader("Set-Cookie", toSetCookiesString+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
 		}
 		return ok( outGifStream );
