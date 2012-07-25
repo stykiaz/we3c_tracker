@@ -25,12 +25,19 @@
 							
 						</p>
 						<p>
-							
 							<label>Url:</label> @location.location
+						</p>
+						<p>
+							<label>Start Date:</label> <br/>
+							<input type="text" id="start_date" class="text medium"/>
+						</p>
+						<p>
+							<label>Start Date:</label> <br/>
+							<input type="text" id="end_date" class="text medium"/>
 						</p>
 						<p>							
 							<label>Multiplier <small>If there is not enough data this helps make heatmap more saturated. Value between 1-100</small>:</label> <br/> 
-							<input type="text" id="multiplier" class="text medium"/>
+							<input type="text" id="multiplier" class="text medium" value="25"/>
 						</p>
 								
 						<hr />
@@ -52,17 +59,35 @@
 			
 			<script>
 				$('#goto_clickheat').click(function(){
-					$(this).attr('href', jsRoutes.controllers.Heatmaps.clickHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ));
+					
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.clickHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ) + getDateQuery() );
 					return true;
 				})
 				$('#goto_mousehover').click(function(){
-					$(this).attr('href', jsRoutes.controllers.Heatmaps.mouseFollowHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ));
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.mouseFollowHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ) + getDateQuery() );
 					return true;
 				})
 				$('#goto_fold').click(function(){
-					$(this).attr('href', jsRoutes.controllers.Heatmaps.siteFoldHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ));
+					$(this).attr('href', jsRoutes.controllers.Heatmaps.siteFoldHeat( '@location._id' ).url+"?multiplier="+Number( $('#multiplier').val() ) + getDateQuery() );
 					return true;
 				})
+				$(function() {
+					$('#start_date').datepicker({ dateFormat: "dd/mm/yy" });
+					$('#end_date').datepicker({ dateFormat: "dd/mm/yy" });
+				});
+				function getDateQuery() {
+					var startDate = $('#start_date').datepicker("getDate"); 
+					var endDate = $('#end_date').datepicker("getDate"); 
+					var dateQuery = '';
+					if( startDate != null && endDate != null) {
+						if( endDate.getTime() > startDate.getTime() ) dateQuery = '&start_date='+startDate.getTime()+'&end_date='+endDate.getTime(); 
+					} else if( startDate != null ) {
+						dateQuery = '&start_date='+startDate.getTime();
+					} else if( endDate != null ) {
+						dateQuery = '&end_date='+endDate.getTime();
+					}
+					return dateQuery;
+				}
 			</script>
 			
 }

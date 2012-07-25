@@ -42,20 +42,6 @@ public class DataHub extends Controller {
 		public String key;
 	}
 	
-	public static Result track1() {
-		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
-		SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss zzz");
-		int timeOffset = TimeZone.getDefault().getOffset(new Date().getTime() );
-		java.util.Calendar cal = Calendar.getInstance(new SimpleTimeZone(0, "GMT"));
-		httpDateFormat.setCalendar(cal);
-		Long systemTs = new Date().getTime( );
-//		response().setCookie(Tools.md5Encode( "aaaa" )+"_last_loc", "dummy_"+systemTs, (int) (systemTs / 1000 + 3600 + timeOffset / 1000), "/" );
-//		System.out.println( Tools.md5Encode( "aaaa" )+"_last_loc=dummy_"+systemTs+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +";" );
-		response().setHeader("Set-Cookie", Tools.md5Encode( "aaaa" )+"_last_loc=dummy_"+systemTs+"; Path=/; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +";" );
-//		response().setHeader("Set-Cookie", Tools.md5Encode( "aaaa" )+"_last_loc=dummy_"+systemTs+"; Path=/; Expires=Wed, 13-Jan-2021 22:23:01 GMT;" );
-		return ok("test 1");
-		
-	}
 	public static Result track() {
 		
 		response().setContentType( "image/png" );
@@ -90,12 +76,7 @@ public class DataHub extends Controller {
 		StringBuilder toSetCookiesString = new StringBuilder();
 		toSetCookiesString.append("_we3ctr=1"+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/");
 		
-		if( /*session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session_ts") &&
-			( systemTs < Long.valueOf( session().get(Tools.md5Encode( req.get().host )+"_tracked_session_ts") ) ) &&
-			session().containsKey(Tools.md5Encode( req.get().host )+"_tracked_session") */
-			storedTrackedSessionId != null
-			) {
-// 			trackSess = TrackSession.coll.findOneById( session().get( Tools.md5Encode( req.get().host )+"_tracked_session") );
+		if( storedTrackedSessionId != null ) {
 			trackSess = TrackSession.coll.findOneById( storedTrackedSessionId.value() );
 		} 
 		if( trackSess == null ) {
@@ -117,21 +98,16 @@ public class DataHub extends Controller {
 			trackSess.userId = user._id;
 			trackSess._id =  TrackSession.save(trackSess).getSavedId();
 			
-// 			session().put( Tools.md5Encode( req.get().host )+"_tracked_session", trackSess._id);
 			//TODO: get client IP using http proxy
 		}
 		
-//		response().setCookie(cookieSessionName, trackSess._id, (int) (systemTs / 1000 + 3600 + timeOffset / 1000), "/" );
-//		System.out.println( cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
 		toSetCookiesString.append( "; "+cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
-//		response().setHeader("Set-Cookie", cookieSessionName+"="+trackSess._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) ) +"; Path=/" );
-		
+
 		RecordedLocation.Model loc = null;
 		String cookiesLocationName = Tools.md5Encode( req.get().host )+"_last_loc"; //last tracked location
 		Http.Cookie lastTrackedLocationId = request().cookies().get( cookiesLocationName );
 		
-		if( lastTrackedLocationId != null /* session().containsKey(Tools.md5Encode( req.get().host )+"_last_tracked_location") */ ) {
-// 			loc =  RecordedLocation.coll.findOneById( session().get(Tools.md5Encode( req.get().host )+"_last_tracked_location") );
+		if( lastTrackedLocationId != null ) {
 			loc =  RecordedLocation.coll.findOneById( lastTrackedLocationId.value() );
 		}
 		
@@ -166,11 +142,7 @@ public class DataHub extends Controller {
 						if( trackSess.firstActionAt == null ) { 
 							trackSess.firstActionAt = new Date( action.ts ); TrackSession.save(trackSess);
 						}
-// 						session().put(Tools.md5Encode( req.get().host )+"_last_tracked_location", loc._id);
-//						response().setCookie(cookiesLocationName, loc._id, (int)(systemTs / 1000 + 3600 + timeOffset / 1000 ), "/" );
-//						response().setHeader("Set-Cookie", cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
 						toSetCookiesString.append( "; "+cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
-//						System.out.println( cookiesLocationName+"="+loc._id+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset) )+ "; Path=/" );
 						
 						break;
 					case 1: //mouse down

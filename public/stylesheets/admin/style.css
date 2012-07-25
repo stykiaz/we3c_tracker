@@ -1033,4 +1033,5 @@ a.add_another { float: right; }
 .preview .player_link.play { background-position: 0 -128px; }
 .preview .player_link.pause { background-position: 0 -160px; }
 .preview .player_link.reload { background-position: 0 -96px; }
+.preview .player_link.download { background-position: 0 -192px; }
 /*END: Preview*/
