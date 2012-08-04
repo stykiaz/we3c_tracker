@@ -2,8 +2,10 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,11 +24,14 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import akka.util.Duration;
+
 import com.avaje.ebean.Ebean;
 
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
+import play.api.libs.concurrent.Akka;
 import play.mvc.Action;
 import play.mvc.Http.Request;
 import play.mvc.Http;
@@ -44,7 +49,7 @@ public class Global extends GlobalSettings {
 
 			StringWriter errors = new StringWriter();
 			arg0.printStackTrace(new PrintWriter(errors));
-//			System.out.println( "stack: " + errors );
+			//			System.out.println( "stack: " + errors );
 
 			java.util.Properties props = new java.util.Properties();
 			props.put("mail.smtp.auth", "true");
@@ -55,9 +60,9 @@ public class Global extends GlobalSettings {
 
 			Session session = Session.getInstance(props,
 					new javax.mail.Authenticator() {
-						protected PasswordAuthentication getPasswordAuthentication() {
-							return new PasswordAuthentication(AppConfig.mail_smtpUsername, AppConfig.mail_smtpPassword);
-						}
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(AppConfig.mail_smtpUsername, AppConfig.mail_smtpPassword);
+				}
 			});
 			try {
 
@@ -74,7 +79,7 @@ public class Global extends GlobalSettings {
 			} catch (MessagingException e) {
 			}
 			return super.onError(arg0);
-//			return Results.internalServerError( views.html.custom_500.render( ((play.api.PlayException.UsefulException)arg0).id() ) );
+			//			return Results.internalServerError( views.html.custom_500.render( ((play.api.PlayException.UsefulException)arg0).id() ) );
 		} else {
 			return super.onError(arg0);
 		}
@@ -84,7 +89,7 @@ public class Global extends GlobalSettings {
 	public Result onHandlerNotFound(String uri) {
 		if( AppConfig.isProd() ) {
 			return super.onHandlerNotFound( uri );
-//			return Results.notFound( views.html.custom_404.render() );
+			//			return Results.notFound( views.html.custom_404.render() );
 		} else {
 			return super.onHandlerNotFound( uri );
 		}
@@ -92,7 +97,7 @@ public class Global extends GlobalSettings {
 	}
 
 	@Override
-	public void onStart(Application arg0) {
+	public void onStart(Application app) {
 		if( Play.application().configuration().getString("app.envirement").equals("dev") ) {
 			AppConfig.setupDevEnv();
 		} else if( Play.application().configuration().getString("app.envirement").equals("test") ) {
@@ -100,7 +105,26 @@ public class Global extends GlobalSettings {
 		} else if( Play.application().configuration().getString("app.envirement").equals("prod") ) {
 			AppConfig.setupProdEnv();
 		}
-		super.onStart(arg0);
+
+		play.libs.Akka.system().scheduler().schedule(
+				Duration.create(0, TimeUnit.MILLISECONDS), 
+				Duration.create(1, TimeUnit.DAYS),
+				new Runnable() {
+					public void run() {
+						System.out.println("tick");
+						File dir = new File( AppConfig.temporaryFilesDirectory );
+						for( String fname : dir.list() ) {
+							if( fname.equals(".") || fname.equals("..") ) continue;
+							File tmp = new File( AppConfig.temporaryFilesDirectory + fname );
+							if( tmp.exists() && tmp.isFile() && ( new Date().getTime() - tmp.lastModified() ) > ( 30L * 86400L * 1000L ) ) {
+								tmp.delete(); 
+							}
+						}
+					}
+				}
+		);
+
+		super.onStart(app);
 	}
 
 }
