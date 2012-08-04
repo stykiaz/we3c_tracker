@@ -79,6 +79,7 @@ public class Heatmaps extends Controller {
 		
 		String pageMap;
 //		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/16601f1c-d7f3-4326-b75b-cbc6708a554e.jpg").exists() ) {
+		//TODO: cache those previews
 			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
 			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
 			try {

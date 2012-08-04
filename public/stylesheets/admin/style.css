@@ -1028,10 +1028,4 @@ span.addItemBigPlus, a.add_another { display: block; float: left; width: 16px; h
 a.add_another { float: right; }
 /*END: icons */
 
-/*BEGIN Preview */
-.preview .player_link { display: block; float: left; width: 32px; height: 32px; background-image: url('/assets/images/site/cursors.png'); margin-right: 10px;}
-.preview .player_link.play { background-position: 0 -128px; }
-.preview .player_link.pause { background-position: 0 -160px; }
-.preview .player_link.reload { background-position: 0 -96px; }
-.preview .player_link.download { background-position: 0 -192px; }
-/*END: Preview*/
+

@@ -1,4 +1,4 @@
-@(sess: models.TrackSession.Model, location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model, sessLocations: net.vz.mongodb.jackson.DBCursor[models.RecordedLocation.Model], data: String )
+@(sess: models.TrackSession.Model, location: models.RecordedLocation.Model, firstAction: models.TrackedAction.Model, sessLocations: net.vz.mongodb.jackson.DBCursor[models.RecordedLocation.Model], data: String, jsCode: String )
 <!DOCTYPE html>
 @locationRow( row : models.RecordedLocation.Model ) = {
 	<option value="@row._id" @if( row._id.equals( location._id ) ){selected="selected"}>@row.location</option>
@@ -25,7 +25,6 @@
 	
 	<!--[if lt IE 8]><style type="text/css" media="all">@@import url("/assets/stylesheets/admin/ie.css");</style><![endif]-->
 
-	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
 
 </head>
 <body>
@@ -37,27 +36,23 @@
 		<span style="font-weight: bold;">OS:</span> <span>@models.TrackSession.getOS(sess)</span>
 		<br/>
 		<a href="#" class="player_link play_pause play"></a>  
-		<a href="#" class="player_link reload"></a>  
-		<a href="@routes.Preview.download( location._id )" target="_blank" class="player_link download"></a>
+		<a href="#" class="player_link reload"></a> 
 		<span style="font-weight: bold;">Duration:</span> @models.RecordedLocation.getDuration(location)  
 		<span style="font-weight: bold;">Current Playback:</span> <span id="current_playback">0</span>
-		<a href="@routes.Heatmaps.filter( location._id )" target="_blank" style="font-weight: bold;">Heatmap</a> <br/>
-		<span style="font-weight: bold;">Locations:</span> <select id="locations">
-															@for( ind <- 1 to sessLocations.size() ) {
-																@locationRow(sessLocations.next())
-															}
-														   </select>
+		
 	</p>
-	<iframe id="playback" style="border: 1px solid black; width: @(firstAction.w)px; height: @(firstAction.h)px; " src="@routes.Preview.proxy(location._id)" ></iframe>
+	<iframe id="playback" style="border: 1px solid black; width: @(firstAction.w)px; height: @(firstAction.h)px; " src="./iframe.html" >
+	</iframe>
 
-	<script type="text/javascript" src="@routes.Application.javascriptRoutes()"></script>
 	<script type="text/javascript">
 		var viewLocationId = '@location._id';
 	</script>
-	<script type="text/javascript" src="@routes.Application.javascriptRoutes()"></script>
 	<script type="text/javascript">
 		var locationData = @Html( data );
 	</script>
-	<script type="text/javascript" src="@routes.Assets.at("javascripts/preview.js")"></script>
+	<script type="text/javascript">
+		@Html(jsCode)
+	</script>
+	
 </body>
 </html>
