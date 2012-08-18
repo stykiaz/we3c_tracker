@@ -112,7 +112,6 @@ public class Preview extends Controller {
 			return internalServerError();
 		}
 		String downloadIframe = download_iframe.render( utils.Base64.encode( pmapBytes ) ).toString();
-		//TODO: force download zip file
 		try {
 			String zipFileName = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".zip";
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream( zipFileName ) );
@@ -123,20 +122,17 @@ public class Preview extends Controller {
 			out.putNextEntry(new ZipEntry("iframe.html"));
 			byte[] byteArray1 = downloadIframe.getBytes();
 			out.write(byteArray1);
-			
 //			out.putNextEntry(new ZipEntry("site.jpg"));
 //			out.write(pmapBytes);
 			
 			out.close();
 			
-			response().setHeader("Content-Disposition", "attachment; filename=location_replay.zip");
+			response().setHeader("Content-Disposition", "attachment; filename=replay.zip");
 			return ok( new File( zipFileName ) );
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return internalServerError();
@@ -199,7 +195,6 @@ public class Preview extends Controller {
 		Document doc;
 		try {
 			doc = Jsoup.connect( location.location ).get();
-//			doc = Jsoup.connect( "http://static.wethreecreatives.com/trees.html" ).get();
 		} catch( IOException e ) {
 			//TODO: send tonification
 			return internalServerError("IOException");

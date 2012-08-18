@@ -31,6 +31,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import setups.AppConfig;
 import utils.HeatMap;
+import utils.Tools;
 
 public class Heatmaps extends Controller {
 	
@@ -78,22 +79,21 @@ public class Heatmaps extends Controller {
 		}
 		
 		String pageMap;
-//		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/16601f1c-d7f3-4326-b75b-cbc6708a554e.jpg").exists() ) {
-		//TODO: cache those previews
-			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
-			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
-			try {
-				System.out.println( command );
-				Process p = Runtime.getRuntime().exec( command );
-				p.waitFor();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return internalServerError();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return internalServerError();
-			}
-//		} else pageMap =  "/media/ext3/www/htdocs/work/we3c/tracker_tmp/16601f1c-d7f3-4326-b75b-cbc6708a554e.jpg";
+		
+//		pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
+		pageMap = AppConfig.temporaryFilesDirectory + Tools.md5Encode(location.location + ( new Date().getTime() / 86400 ) )+".jpg"; 
+		String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
+		try {
+			System.out.println( command );
+			Process p = Runtime.getRuntime().exec( command );
+			p.waitFor();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return internalServerError();
+		}
 		
 		List<GeneralPath> points = new ArrayList<GeneralPath>();
 		GeneralPath path = null;
@@ -130,8 +130,8 @@ public class Heatmaps extends Controller {
 		hmap.createLinesHeatMap(0.0F + (float)heatRequest.get().multiplier / 100F, points);
 		
 		
-		System.out.println( "Points: " + points.size() );
-		System.out.println( "Maxwidth: " + maxWidth );
+//		System.out.println( "Points: " + points.size() );
+//		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
 		return ok( new File( heatMapOutput ) );
@@ -157,22 +157,21 @@ public class Heatmaps extends Controller {
 			maxWidth = (short) Math.max(maxWidth, action.next().w);
 		}
 		String pageMap;
-		//TODO: check for cached recent snapshot
-//		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/2823850d-af7e-40e8-a5f7-9bdb6ca525d4.jpg").exists() ) {
-			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
-			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
-			try {
-				System.out.println( command );
-				Process p = Runtime.getRuntime().exec( command );
-				p.waitFor();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return internalServerError();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return internalServerError();
-			}
-//		} else pageMap =  "/media/ext3/www/htdocs/work/we3c/tracker_tmp/2823850d-af7e-40e8-a5f7-9bdb6ca525d4.jpg";
+		
+//		pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg";
+		pageMap = AppConfig.temporaryFilesDirectory + Tools.md5Encode(location.location + ( new Date().getTime() / 86400 ) )+".jpg";
+		String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
+		try {
+			System.out.println( command );
+			Process p = Runtime.getRuntime().exec( command );
+			p.waitFor();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return internalServerError();
+		}
 		
 		List<Rectangle> points = new ArrayList<Rectangle>();
 		Iterator< ObjectId > locationsIterator = locationsCollection.iterator();
@@ -201,8 +200,8 @@ public class Heatmaps extends Controller {
 		hmap.buildData( points );
 		hmap.createFoldHeatMap( 0.0F + heatRequest.get().multiplier / 10f );
 		
-		System.out.println( "Points: " + points.size() );
-		System.out.println( "Maxwidth: " + maxWidth );
+//		System.out.println( "Points: " + points.size() );
+//		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
 		return ok( new File( heatMapOutput ) );
@@ -231,21 +230,21 @@ public class Heatmaps extends Controller {
 		}
 		
 		String pageMap;
-//		if( !new File("/media/ext3/www/htdocs/work/we3c/tracker_tmp/9498de47-fa45-4019-aa77-e9a3fcac49c3.jpg").exists() ) {
-			pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
-			String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
-			try {
-				System.out.println( command );
-				Process p = Runtime.getRuntime().exec( command );
-				p.waitFor();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return internalServerError();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return internalServerError();
-			}
-//		} else pageMap =  "/media/ext3/www/htdocs/work/we3c/tracker_tmp/9498de47-fa45-4019-aa77-e9a3fcac49c3.jpg";
+
+//		pageMap = AppConfig.temporaryFilesDirectory + UUID.randomUUID().toString()+".jpg"; 
+		pageMap = AppConfig.temporaryFilesDirectory + Tools.md5Encode(location.location + ( new Date().getTime() / 86400 ) )+".jpg";
+		String command = AppConfig.pathToHtmlToImageGenerator + " --width "+maxWidth + " " + location.location + " " + pageMap;
+		try {
+			System.out.println( command );
+			Process p = Runtime.getRuntime().exec( command );
+			p.waitFor();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return internalServerError();
+		}
 		
 		List<Point> points = new ArrayList<Point>();
 
@@ -261,8 +260,8 @@ public class Heatmaps extends Controller {
 
 		hmap.createHeatMap(0.0F + heatRequest.get().multiplier / 10 );
 		
-		System.out.println( "Points: " + points.size() );
-		System.out.println( "Maxwidth: " + maxWidth );
+//		System.out.println( "Points: " + points.size() );
+//		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
 		response().setContentType( "image/png" );
