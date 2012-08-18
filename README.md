@@ -5,22 +5,12 @@ we3c_tracker
 
 Free web application allow webadministrators to generate useful statiscts based on how users navigate in their websites in real time.
 
+[Google Group](https://groups.google.com/forum/?#!forum/we3c_tracker)
 [Contributors](http://github.com/stykiaz/we3c_tracker/contributors)
 
 ### Examples ###
 
-[![Click heat](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/click_heat.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/click_heat.png)
-[![Click heat1](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/click_heat1.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/click_heat1.png)
-[![Click heat2](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/click_heat2.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/click_heat2.png)
-
-[![Fold](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/fold.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/fold.png)
-[![Fold](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/fold1.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/fold1.png)
-[![Fold](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/fold2.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/fold2.png)
-
-[![Mouse Flow](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/mouse_flow.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/mouse_flow.png)
-[![Mouse Flow](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/mouse_flow1.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/mouse_flow1.png)
-[![Mouse Flow](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/mouse_flow2.png)](https://raw.github.com/stykiaz/we3c_tracker/blob/master/examples/mouse_flow2.png)
-
+In directory examples are a few generated heatmaps as well as a session replay download file.
 
 ### Usage ###
 
