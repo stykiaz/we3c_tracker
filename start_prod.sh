@@ -20,8 +20,8 @@ rebuildService ()
 {
 	cd /www/sites/we3c/tracker
 	git clone /home/git/repositories/we3c-tracker.git/
-	cd properties
-	/opt/play-2.0.1/play clean compile stage
+	cd we3c-tracker
+	/opt/play-2.0.3/play clean compile stage
 	rm -fr app
 	rm -fr conf
 	rm -fr lib
