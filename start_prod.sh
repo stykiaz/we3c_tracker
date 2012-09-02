@@ -4,7 +4,7 @@ startService ()
 {
 	stopService
 	cd /www/sites/we3c/tracker
-	nohup /www/sites/we3c/tracker/target/start -Dhttp.port=9001 -Dconfig.resource=prod.conf &
+	su ubuntu -c "nohup /www/sites/we3c/tracker/target/start -Dhttp.port=9001 -Dconfig.resource=prod.conf &"
 }
 stopService () 
 {
