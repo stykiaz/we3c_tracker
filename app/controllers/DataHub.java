@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
+
+import org.apache.commons.io.IOUtils;
 
 import nl.bitwalker.useragentutils.UserAgent;
 
@@ -46,6 +49,14 @@ public class DataHub extends Controller {
 		
 		response().setContentType( "image/png" );
 		InputStream outGifStream = Play.application().resourceAsStream("/public/images/site/blank.png");
+		byte[] outBytedGif;
+		try {
+			outBytedGif = IOUtils.toByteArray( outGifStream );
+		} catch (IOException e1) {
+			outBytedGif = new byte[]{};
+			e1.printStackTrace();
+		}
+		
 		SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss zzz");
 		int timeOffset = TimeZone.getDefault().getOffset(new Date().getTime() ) + 7200000; 
 		java.util.Calendar cal = Calendar.getInstance(new SimpleTimeZone(0, "GMT"));
@@ -53,7 +64,7 @@ public class DataHub extends Controller {
 		
 		Form<TrackRequest> req = form( TrackRequest.class ).bindFromRequest();
 
-		if( req.hasErrors() ) return badRequest( outGifStream );
+		if( req.hasErrors() ) return badRequest( outBytedGif );
 		
 		TrackSession.Model trackSess = null;
 		User.Model user = null;
@@ -63,10 +74,10 @@ public class DataHub extends Controller {
 			e.printStackTrace();
 			return internalServerError("No User");
 		}
-		if( user == null || user._id == null || user._id.isEmpty() ) return badRequest( outGifStream );
+		if( user == null || user._id == null || user._id.isEmpty() ) return badRequest( outBytedGif );
 		
 		if( !User.isDomainTrackable( req.get().host, user ) ) {
-			return forbidden( outGifStream );
+			return forbidden( outBytedGif );
 		}
 		
 		String cookieSessionName = Tools.md5Encode( req.get().host )+"_sess";
@@ -147,7 +158,7 @@ public class DataHub extends Controller {
 						break;
 					case 1: //mouse down
 						//TODO: inspect errors and cases here
-						if( loc == null ) return badRequest(outGifStream);
+						if( loc == null ) return badRequest(outBytedGif);
 						if( parts.length != 6 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 1;
@@ -159,7 +170,7 @@ public class DataHub extends Controller {
 						break;
 					case 2: //move
 						//TODO: inspect errors and cases here
-						if( loc == null ) return badRequest(outGifStream);
+						if( loc == null ) return badRequest(outBytedGif);
 						if( parts.length != 6 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 2;
@@ -171,7 +182,7 @@ public class DataHub extends Controller {
 						break;
 					case 3: //resize
 						//TODO: inspect errors and cases here
-						if( loc == null ) return badRequest(outGifStream);
+						if( loc == null ) return badRequest(outBytedGif);
 						if( parts.length != 4 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 3;
@@ -181,7 +192,7 @@ public class DataHub extends Controller {
 						break;
 					case 4: //scroll
 						//TODO: inspect errors and cases here
-						if( loc == null ) return badRequest(outGifStream);
+						if( loc == null ) return badRequest(outBytedGif);
 						if( parts.length != 5 ) continue;
 						action = new TrackedAction.Model();
 						action.e = 4;
@@ -217,7 +228,7 @@ public class DataHub extends Controller {
 			response().setHeader("p3p", "CP=\"CAO PSA OUR\"");
 			response().setHeader("Set-Cookie", toSetCookiesString+"; Expires="+httpDateFormat.format( new Date( systemTs + 3600000 + timeOffset ) )+ "; Path=/" );
 		}
-		return ok( outGifStream );
+		return ok( outBytedGif );
 		
 	}
 	

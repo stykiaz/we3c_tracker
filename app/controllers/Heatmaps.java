@@ -7,6 +7,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
@@ -134,7 +137,18 @@ public class Heatmaps extends Controller {
 //		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
-		return ok( new File( heatMapOutput ) );
+		response().setContentType( "image/png" );
+		try {
+			byte[] outB = IOUtils.toByteArray( new FileInputStream(new File( heatMapOutput )) );
+			return ok( outB );
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return internalServerError("Error generating the outBuffer");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError("Error generating the outBuffer");
+		} 
+//		return ok( new File( heatMapOutput ) );
 	}
 	
 	public static Result siteFoldHeat(String locId) {
@@ -204,7 +218,18 @@ public class Heatmaps extends Controller {
 //		System.out.println( "Maxwidth: " + maxWidth );
 		
 		new File(pageMap).delete();
-		return ok( new File( heatMapOutput ) );
+		response().setContentType( "image/png" );
+		try {
+			byte[] outB = IOUtils.toByteArray( new FileInputStream(new File( heatMapOutput )) );
+			return ok( outB );
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return internalServerError("Error generating the outBuffer");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError("Error generating the outBuffer");
+		}
+//		return ok( new File( heatMapOutput ) );
 		
 	}
 	
@@ -265,7 +290,17 @@ public class Heatmaps extends Controller {
 		
 		new File(pageMap).delete();
 		response().setContentType( "image/png" );
-		return ok( new File( heatMapOutput ) );
+		try {
+			byte[] outB = IOUtils.toByteArray( new FileInputStream(new File( heatMapOutput )) );
+			return ok( outB );
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return internalServerError("Error generating the outBuffer");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError("Error generating the outBuffer");
+		}
+//		return ok( new File( heatMapOutput ) );
 	}
 	
 }
