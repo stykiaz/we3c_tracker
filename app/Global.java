@@ -1,50 +1,29 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 import akka.util.Duration;
-
-import com.avaje.ebean.Ebean;
-
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
-import play.api.libs.concurrent.Akka;
-import play.mvc.Action;
-import play.mvc.Http.Request;
-import play.mvc.Http;
+import play.mvc.Http.RequestHeader;
 import play.mvc.Result;
-import play.mvc.Results;
 import setups.AppConfig;
-import utils.Tools;
 
 
 public class Global extends GlobalSettings {
 
 	@Override
-	public Result onError(Throwable arg0) {
+	public Result onError(RequestHeader arg1, Throwable arg0) {
+		
 		if( !AppConfig.isDev() ) {
 
 			StringWriter errors = new StringWriter();
@@ -78,22 +57,20 @@ public class Global extends GlobalSettings {
 
 			} catch (MessagingException e) {
 			}
-			return super.onError(arg0);
+			return super.onError(arg1, arg0);
 			//			return Results.internalServerError( views.html.custom_500.render( ((play.api.PlayException.UsefulException)arg0).id() ) );
 		} else {
-			return super.onError(arg0);
+			return super.onError(arg1, arg0);
 		}
 	}
 
 	@Override
-	public Result onHandlerNotFound(String uri) {
+	public Result onHandlerNotFound(play.mvc.Http.RequestHeader arg0) {
 		if( AppConfig.isProd() ) {
-			return super.onHandlerNotFound( uri );
-			//			return Results.notFound( views.html.custom_404.render() );
+			return super.onHandlerNotFound(arg0);
 		} else {
-			return super.onHandlerNotFound( uri );
+			return super.onHandlerNotFound(arg0);
 		}
-
 	}
 
 	@Override
