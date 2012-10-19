@@ -32,10 +32,12 @@ import models.User;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import setups.AppConfig;
 import utils.HeatMap;
 import utils.Tools;
 
+@Security.Authenticated(AdminSecurity.class)
 public class Heatmaps extends Controller {
 	
 	public static class HeatMapRequest {

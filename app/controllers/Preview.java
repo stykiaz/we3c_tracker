@@ -32,11 +32,13 @@ import static play.libs.Json.toJson;
 import play.Play;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import setups.AppConfig;
 import utils.Base64;
 import utils.Tools;
 import views.html.preview.*;
 
+@Security.Authenticated(AdminSecurity.class)
 public class Preview extends Controller {
 
 	public static Result view(String locId) {

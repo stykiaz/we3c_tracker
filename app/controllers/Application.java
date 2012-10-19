@@ -11,6 +11,7 @@ import play.mvc.*;
 import utils.Tools;
 import views.html.*;
 
+
 public class Application extends Controller {
 
 	public static class AuthenticateReq {
