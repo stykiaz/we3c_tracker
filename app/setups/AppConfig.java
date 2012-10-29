@@ -42,10 +42,7 @@ public class AppConfig {
 		pathToHtmlToImageGenerator = "/media/ext3/www/htdocs/work/we3c/wkhtmltoimage-i386";
 		domain = "localhost:9001";
 		
-		mail_smtpUsername = "stan@wethreecreatives.com";
-		mail_smtpPassword = "alfanero3";
-		mail_smtpHost = "smtpout.europe.secureserver.net";
-		mail_smtpPort = "465";
+	
 		
 		googleAnalyticsCode = "";
 		
@@ -59,10 +56,7 @@ public class AppConfig {
 		pathToHtmlToImageGenerator = "/www/sites/we3c/wkhtmltoimage-i386";
 		domain = "clickheat.wethreecreatives.com";
 		
-		mail_smtpUsername = "stan@wethreecreatives.com";
-		mail_smtpPassword = "alfanero3";
-		mail_smtpHost = "smtpout.europe.secureserver.net";
-		mail_smtpPort = "465";
+		
 		
 		googleAnalyticsCode = "";
 		
@@ -75,10 +69,7 @@ public class AppConfig {
 		pathToHtmlToImageGenerator = "/www/sites/we3c/wkhtmltoimage-i386";
 		domain = "clickheat.wethreecreatives.com";
 		
-		mail_smtpUsername = "stan@wethreecreatives.com";
-		mail_smtpPassword = "alfanero3";
-		mail_smtpHost = "smtpout.europe.secureserver.net";
-		mail_smtpPort = "465";
+		
 		
 		googleAnalyticsCode = "";
 	}
